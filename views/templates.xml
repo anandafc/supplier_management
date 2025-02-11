@@ -1,0 +1,706 @@
+<odoo>
+    <data>
+        <template id="portal_my_home_vendor" inherit_id="portal.portal_my_home">
+            <xpath expr="//div[@id='portal_vendor_category']" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">Register Supplier</t>
+                    <t t-set="text">Onboard a new vendor</t>
+                    <t t-set="url" t-value="'/my/supplier2'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="portal_my_home_vendor_list" inherit_id="portal.portal_my_home">
+            <xpath expr="//div[@id='portal_vendor_category']" position="inside">
+                <t t-call="portal.portal_docs_entry" groups="base.group_user">
+                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">Vendor</t>
+                    <t t-set="text">List of all your suppliers</t>
+                    <t t-set="url" t-value="'/my/supplier'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="tax_id_error">
+            <t t-call="portal.portal_layout">
+                <div class="container" style="max-width: 800px; margin-top: 20px;">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Tax Identification Number (TIN) Error!</h4>
+                        <p>The Tax Identification Number (TIN) you entered is invalid. Please check the number and try
+                            again.
+                        </p>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="trade_license_error">
+            <t t-call="portal.portal_layout">
+                <div class="container" style="max-width: 800px; margin-top: 20px;">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Trade License Number Error!</h4>
+                        <p>The Trade License Number you entered is invalid. Please check the number and try again.
+                        </p>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="expiry_date_error">
+            <t t-call="portal.portal_layout">
+                <div class="container" style="max-width: 800px; margin-top: 20px;">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Expiry Date Error!</h4>
+                        <p>Date is expired. Please check the date and try again.
+                        </p>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="portal_my_home_supplier_registration_breadcrumbs" name="Portal layout : supplier menu entries"
+                  inherit_id="portal.portal_breadcrumbs" priority="25">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'supplier_registration'" class="breadcrumb-item">Supplier Registration</li>
+            </xpath>
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'supplier_list'" class="breadcrumb-item">Supplier List</li>
+            </xpath>
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'supplier_details'" class="breadcrumb-item">Supplier Detail</li>
+            </xpath>
+        </template>
+
+        <template id="supplier_registration_success">
+            <t t-call="portal.portal_layout">
+                <div class="container" style="max-width: 800px; margin-top: 20px;">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Supplier Registration Successful!</h4>
+                        <p>Thank you for registering as a supplier. Your application is being reviewed by our team. You
+                            will receive an email notification once your application has been approved.
+                        </p>
+                        <hr>
+                            <p class="mb-0">If you have any questions, please contact us at
+                                <a href="mailto:hr@info.com">email</a>
+                            </p>
+                        </hr>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="supplier_registration_failed">
+            <t t-call="portal.portal_layout">
+                <div class="container" style="max-width: 800px; margin-top: 20px;">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Supplier Registration Failed!</h4>
+                        <p>There was an error processing your registration. Please try again later or contact us at
+                            <a href="mailto:farhanacaa@gmail.com">email</a>
+                        </p>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="new_supplier_registration_form_view_portal">
+            <t t-call="portal.portal_layout">
+                <div class="container" id="new_supplier_registration" style="max-width: 800px; margin-top: 20px;">
+                    <t t-foreach="error_list" t-as="error">
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Error!</h4>
+                            <t t-out="error"/>
+                        </div>
+                    </t>
+                    <t t-if="success_list">
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">Success!</h4>
+                            <t t-foreach="success_list" t-as="success">
+                                <t t-out="success"/>
+                            </t>
+                        </div>
+                    </t>
+                    <form id="multi-step-form" method="POST" action="/my/supplier2/register" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <!-- Step 1: Company Information -->
+                        <div class="form-step" id="step-1">
+                            <h3 style="text-align: center;">Section 1: Company Information</h3>
+                            <div>
+                                <div class="row col-md-12">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="company_name">Company Name</label>
+                                            <input type="text" class="form-control" id="company_name"
+                                                   name="company_name"
+                                                   placeholder="Enter company name"
+                                                   style="background-color: #ccffcc;"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Company Email</label>
+                                            <input type="text" class="form-control" id="email"
+                                                   name="email"
+                                                   placeholder="Enter company email"
+                                                   style="background-color: #ccffcc;"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="company_type_category">Company Type (LLC, Corporation, etc.)
+                                            </label>
+                                            <select class="form-control" id="company_type_category"
+                                                    name="company_type_category" required="true"
+                                                    style="background-color: #ccffcc;">
+                                                <option value="LLC">LLC</option>
+                                                <option value="corporate">Corporation</option>
+                                                <option value="sole_proprietorship">Sole Proprietorship</option>
+                                                <option value="partnership">Partnership</option>
+                                                <option value="cooperative">Cooperative</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="company_registered_address">Company Registered Address</label>
+                                            <input type="text" class="form-control" id="company_registered_address"
+                                                   name="company_registered_address"
+                                                   placeholder="Enter registered address" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="company_alternate_address">Company Alternate Address</label>
+                                            <input type="text" class="form-control" id="company_alternate_address"
+                                                   name="company_alternate_address"
+                                                   placeholder="Enter alternate address" style="background-color: #ccffcc;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="phone">Company Phone</label>
+                                            <input type="text" class="form-control" id="phone"
+                                                   name="phone"
+                                                   placeholder="Enter company phone"
+                                                   style="background-color: #ccffcc;"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="trade_license_number">Trade License Number</label>
+                                            <input type="text" class="form-control" id="trade_license_number"
+                                                   name="trade_license_number" placeholder="Enter trade license number"
+                                                   style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tax_identification_number">Tax Identification Number (TIN)
+                                            </label>
+                                            <input type="text" class="form-control" id="tax_identification_number"
+                                                   name="tax_identification_number" placeholder="Enter TIN"
+                                                   style="background-color: #ccffcc;"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="commencement_date">Commencement Date</label>
+                                            <input type="date" class="form-control" id="commencement_date"
+                                                   name="commencement_date" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="expiry_date">Expiry Date</label>
+                                            <input type="date" class="form-control" id="expiry_date" name="expiry_date"
+                                             style="background-color: #ccffcc;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row col-md-12">
+                                    <div class="col-md-4">
+                                        <!-- Contact Person Information -->
+                                        <p></p>
+                                        <h4>Contact Person Information</h4>
+                                        <div class="form-group">
+                                            <label for="contact_person_title">Contact Person’s Title</label>
+                                            <input type="text" class="form-control" id="contact_person_title"
+                                                   name="contact_person_title"
+                                                   placeholder="Enter contact person's title" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contact_email">Contact Email</label>
+                                            <input type="email" class="form-control" id="contact_email"
+                                                   name="contact_email"
+                                                   placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="contact_phone">Contact Phone</label>
+                                            <input type="tel" class="form-control" id="contact_phone"
+                                                   name="contact_phone"
+                                                   placeholder="Enter contact phone number" style="background-color: #ccffcc;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Finance Department Information -->
+                                        <p></p>
+                                        <h4>Finance Department Information</h4>
+                                        <div class="form-group">
+                                            <label for="finance_contact_title">Contact Person’s Title</label>
+                                            <input type="text" class="form-control" id="finance_contact_title"
+                                                   name="finance_contact_title"
+                                                   placeholder="Enter finance contact person's title" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="finance_contact_email">Contact Email</label>
+                                            <input type="email" class="form-control" id="finance_contact_email"
+                                                   name="finance_contact_email"
+                                                   placeholder="Enter finance contact email" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="finance_contact_phone">Contact Phone</label>
+                                            <input type="tel" class="form-control" id="finance_contact_phone"
+                                                   name="finance_contact_phone"
+                                                   placeholder="Enter finance contact phone number" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <!-- Authorized Person Information -->
+                                        <p></p>
+                                        <h4>Authorized Person Information</h4>
+                                        <div class="form-group">
+                                            <label for="authorized_person_name">Name of Authorized Person</label>
+                                            <input type="text" class="form-control" id="authorized_person_name"
+                                                   name="authorized_person_name"
+                                                   placeholder="Enter authorized person name" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="authorized_person_email">Contact Email</label>
+                                            <input type="email" class="form-control" id="authorized_person_email"
+                                                   name="authorized_person_email"
+                                                   placeholder="Enter authorized person’s email" style="background-color: #ccffcc;"
+                                            />
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="authorized_person_phone">Contact Phone</label>
+                                            <input type="tel" class="form-control" id="authorized_person_phone"
+                                                   name="authorized_person_phone"
+                                                   placeholder="Enter authorized person’s phone number" style="background-color: #ccffcc;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary" id="next-1">Next</button>
+                        </div>
+                        <!-- Step 2: Financial Information -->
+                        <div class="form-step" id="step-2" style="display:none;">
+                            <h3>Section 2: Financial Information</h3>
+                            <!-- Financial Information Fields (as already defined) -->
+                            <h4>Bank Account Information</h4>
+                            <div class="form-group">
+                                <label for="bank_name">Bank Name</label>
+                                <input type="text" class="form-control" id="bank_name" name="bank_name"
+                                       placeholder="Enter bank name" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_address">Bank Address</label>
+                                <input type="text" class="form-control" id="bank_address" name="bank_address"
+                                       placeholder="Enter bank address" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_swift_code">Bank SWIFT Code</label>
+                                <input type="text" class="form-control" id="bank_swift_code" name="bank_swift_code"
+                                       placeholder="Enter SWIFT code" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="account_name">Account Name</label>
+                                <input type="text" class="form-control" id="account_name" name="account_name"
+                                       placeholder="Enter account name" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="account_number">Account Number</label>
+                                <input type="text" class="form-control" id="account_number" name="account_number"
+                                       placeholder="Enter account number" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="iban">IBAN</label>
+                                <input type="text" class="form-control" id="iban" name="iban" placeholder="Enter IBAN" style="background-color: #ccffcc;"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="company_address_as_per_bank">Company Address as per bank records</label>
+                                <input type="text" class="form-control" id="company_address_as_per_bank"
+                                       name="company_address_as_per_bank"
+                                       placeholder="Enter bank-recorded company address" style="background-color: #ccffcc;"/>
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" id="prev-2">Previous</button>
+                            <button type="button" class="btn btn-primary" id="next-2">Next</button>
+                        </div>
+                        <!-- Step 3: Client References -->
+                        <div class="form-step" id="step-3" style="display:none;">
+                            <h3>Section 3: Previous Client References</h3>
+                            <div class="row col-md-12">
+                                <div class="col-md-4">
+                                    <!-- Client 1 Fields -->
+                                    <h4>Client 1</h4>
+                                    <div class="form-group">
+                                        <label for="client_1_name">Client Name</label>
+                                        <input type="text" class="form-control" id="client_1_name" name="client_1_name"
+                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_1_address">Client Address</label>
+                                        <input type="text" class="form-control" id="client_1_address"
+                                               name="client_1_address"
+                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="client_1_contact_email">Client Contact Email</label>
+                                        <input type="email" class="form-control" id="client_1_contact_email"
+                                               name="client_1_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_1_contact_phone">Client Contact Phone</label>
+                                        <input type="tel" class="form-control" id="client_1_contact_phone"
+                                               name="client_1_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <!-- Client 2 Fields -->
+                                    <h4>Client 2</h4>
+                                    <div class="form-group">
+                                        <label for="client_2_name">Client Name</label>
+                                        <input type="text" class="form-control" id="client_2_name" name="client_2_name"
+                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_2_address">Client Address</label>
+                                        <input type="text" class="form-control" id="client_2_address"
+                                               name="client_2_address"
+                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="client_2_contact_email">Client Contact Email</label>
+                                        <input type="email" class="form-control" id="client_2_contact_email"
+                                               name="client_2_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_2_contact_phone">Client Contact Phone</label>
+                                        <input type="tel" class="form-control" id="client_2_contact_phone"
+                                               name="client_2_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <!-- Client 3 Fields -->
+                                    <h4>Client 3</h4>
+                                    <div class="form-group">
+                                        <label for="client_3_name">Client Name</label>
+                                        <input type="text" class="form-control" id="client_3_name" name="client_3_name"
+                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_3_address">Client Address</label>
+                                        <input type="text" class="form-control" id="client_3_address"
+                                               name="client_3_address"
+                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="client_3_contact_email">Client Contact Email</label>
+                                        <input type="email" class="form-control" id="client_3_contact_email"
+                                               name="client_3_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="client_3_contact_phone">Client Contact Phone</label>
+                                        <input type="tel" class="form-control" id="client_3_contact_phone"
+                                               name="client_3_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!-- Navigation buttons -->
+                            <button type="button" class="btn btn-secondary" id="prev-3">Previous</button>
+                            <button type="button" class="btn btn-primary" id="next-3">Next</button>
+                        </div>
+                        <!-- Step 4: Certifications or Accreditations -->
+                        <div class="form-step" id="step-4" style="display:none;">
+                            <h3>Section 4: Certifications or Accreditations</h3>
+                            <!-- Certification Fields -->
+                            <h4>Certification</h4>
+                            <div class="form-group">
+                                <label for="certification">Certification</label>
+                                <input type="text" class="form-control" id="certification" name="certification"
+                                       placeholder="Enter certification name" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="certificate_number">Certificate Number</label>
+                                <input type="text" class="form-control" id="certificate_number"
+                                       name="certificate_number" placeholder="Enter certificate number" style="background-color: #ccffcc;"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="certifying_body">Certifying Body</label>
+                                <input type="text" class="form-control" id="certifying_body" name="certifying_body"
+                                       placeholder="Enter certifying body" style="background-color: #ccffcc;"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="award_date">Award Date</label>
+                                <input type="date" class="form-control" id="award_date" name="award_date"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="certificate_expiry_date">Expiry Date</label>
+                                <input type="date" class="form-control" id="certificate_expiry_date"
+                                       name="certificate_expiry_date" style="background-color: #ccffcc;"
+                                />
+                            </div>
+
+                            <!-- Navigation buttons -->
+                            <button type="button" class="btn btn-secondary" id="prev-4">Previous</button>
+                            <button type="button" class="btn btn-primary" id="next-4">Next</button>
+                        </div>
+                        <div class="form-step" id="step-5" style="display:none;">
+                            <h3>Section 5: Document Submission</h3>
+                            <!-- Document Checklist -->
+                            <h4>Checklist</h4>
+                            <div class="form-group">
+                                <label for="trade_license_business_registration">Trade License / Business Registration
+                                </label>
+                                <input type="file" class="form-control" id="trade_license_business_registration"
+                                       name="trade_license_business_registration"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="certificate_of_incorporation">Certificate of Incorporation</label>
+                                <input type="file" class="form-control" id="certificate_of_incorporation"
+                                       name="certificate_of_incorporation"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="certificate_of_good_standing">Certificate of Good Standing</label>
+                                <input type="file" class="form-control" id="certificate_of_good_standing"
+                                       name="certificate_of_good_standing"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="establishment_card">Establishment Card</label>
+                                <input type="file" class="form-control" id="establishment_card"
+                                       name="establishment_card"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="vat_tax_certificate">VAT / Tax Certificate</label>
+                                <input type="file" class="form-control" id="vat_tax_certificate"
+                                       name="vat_tax_certificate"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="memorandum_of_association">Memorandum of Association / Power of Attorney /
+                                    Legal Instrument authorizing Authorized Person
+                                </label>
+                                <input type="file" class="form-control" id="memorandum_of_association"
+                                       name="memorandum_of_association"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="identification_document_for_authorized_person">Identification Document for
+                                    Authorized Person / Signatory
+                                </label>
+                                <input type="file" class="form-control"
+                                       id="identification_document_for_authorized_person"
+                                       name="identification_document_for_authorized_person"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="bank_letter_indicating_bank_account">Bank Letter indicating Bank Account
+                                    Information
+                                </label>
+                                <input type="file" class="form-control" id="bank_letter_indicating_bank_account"
+                                       name="bank_letter_indicating_bank_account"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="past_2_years_audited_financial_statements">Past 2 years Audited Financial
+                                    Statements
+                                </label>
+                                <input type="file" class="form-control" id="past_2_years_audited_financial_statements"
+                                       name="past_2_years_audited_financial_statements"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="other_certifications">Other Certification / Accreditations</label>
+                                <input type="file" class="form-control" id="other_certifications"
+                                       name="other_certifications"/>
+                            </div>
+
+                            <!-- Declaration -->
+                            <h4>Declaration</h4>
+
+                            <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="declaration" name="declaration" required="required"/>
+                                    <label class="form-check-label" for="declaration">I confirm that all information and documents supplied are true and accurate to the best of my
+knowledge, and I understand that this information may be considered material in the evaluation of
+quotations, bids, and/or proposals.</label>
+                                </div>
+
+                            <div class="form-group">
+                                <label for="signatory_name">Name of Signatory</label>
+                                <input type="text" class="form-control" id="signatory_name" name="signatory_name"
+                                       placeholder="Enter signatory name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="authorized_signatory">Authorized Signatory</label>
+                                <input type="text" class="form-control" id="authorized_signatory"
+                                       name="authorized_signatory" placeholder="Enter authorized signatory"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="company_stamp_and_date">Company Stamp &amp; Date (Image Upload)</label>
+                                <input type="file" class="form-control" id="company_stamp_and_date"
+                                       name="company_stamp_and_date"
+                                       accept="image/*"/>
+                                <small class="form-text text-muted">Please upload an image of the company stamp with the
+                                    date.
+                                </small>
+                            </div>
+                           <button type="button" class="btn btn-secondary" id="prev-5">Previous</button>
+                            <button type="submit" class="btn btn-primary" id="submit-form">Submit</button>
+
+                        </div>
+                    </form>
+                </div>
+                <script src="/supplier_management/static/src/js/form_navigation.js">Navigation Script</script>
+            </t>
+        </template>
+
+        <template id="supplier_list_view_portal">
+            <t t-call="portal.portal_layout">
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Productions</t>
+                </t>
+                <t t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th class="text-center">Company Name</th>
+                            <th class="text-center">Trade License Number</th>
+                            <th class="text-center">Tax Identification Number</th>
+                            <th class="text-center">Commencement Date</th>
+                            <th class="text-center">Expiry Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="suppliers" t-as="supplier">
+                            <tr class="text-center">
+                                <td>
+                                    <a t-attf-href="/my/supplier/#{supplier.id}">
+                                        <t t-esc="supplier.name"/>
+                                    </a>
+                                </td>
+                                <td>
+                                    <t t-esc="supplier.trade_license_number"/>
+                                </td>
+                                <td>
+                                    <t t-esc="supplier.tax_identification_number"/>
+                                </td>
+                                <td>
+                                    <t t-esc="supplier.commencement_date"/>
+                                </td>
+                                <td>
+                                    <t t-esc="supplier.expiry_date"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </t>
+        </template>
+
+        <template id="supplier_details_view_portal" inherit_id="portal.portal_sidebar">
+            <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+                <t t-if="page_name == 'supplier_details'">
+                    <section style="background-color: #eee;">
+                        <div class="container py-5">
+
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="card mb-4">
+                                        <div class="card-body text-center">
+                                            <t t-if="supplier.image_1920">
+                                                <img t-att-src="image_data_uri(supplier.image_1920)"
+                                                     class="rounded-circle img-fluid" style="width: 100%;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                                                     alt="avatar"
+                                                     class="rounded-circle img-fluid" style="width: 150px;"/>
+                                            </t>
+                                            <h5 class="my-3">
+                                                <span t-esc="supplier.name"/>
+                                            </h5>
+                                            <p class="text-muted mb-1">
+                                                <span t-esc="supplier.email"/>
+                                            </p>
+                                            <p class="text-muted mb-4">
+                                                <span t-esc="supplier.website"/>
+                                            </p>
+                                            <!--                                            <div class="d-flex justify-content-center mb-2">.-->
+                                            <!--                                                <button type="button"-->
+                                            <!--                                                        class="btn btn-primary">Follow-->
+                                            <!--                                                </button>-->
+                                            <!--                                                <button type="button"-->
+                                            <!--                                                        class="btn btn-outline-primary ms-1">Message-->
+                                            <!--                                                </button>-->
+                                            <!--                                            </div>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p class="mb-0">Company Name</p>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p t-esc="supplier.name"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p class="mb-0">Trade License</p>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p t-esc="supplier.trade_license_number"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p class="mb-0">TIN</p>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p t-esc="supplier.tax_identification_number"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p class="mb-0">Commencement Date</p>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p t-esc="supplier.commencement_date"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <p class="mb-0">Expiry Date</p>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p t-esc="supplier.expiry_date"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

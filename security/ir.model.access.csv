@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_supplier_otp,supplier.otp,model_supplier_otp,base.group_user,1,1,1,1
+access_supplier_registration,access_supplier_registration,model_supplier_registration,base.group_user,1,1,1,1
+access_recommended_supplier,recommended.supplier,model_recommended_supplier,supplier_management.group_supplier_management_reviewer,1,1,1,1
+access_blacklisted_supplier,blacklisted.supplier,model_blacklisted_supplier,supplier_management.group_supplier_management_reviewer,1,1,1,1
+access_supplier_rfp,supplier.rfp,model_supplier_rfp,base.group_user,1,1,1,1
+access_supplier_rfp_line,supplier.rfp.line,model_supplier_rfp_line,base.group_user,1,1,1,1

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_supplier_registration_form" model="ir.ui.view">
+        <field name="name">supplier.registration.form</field>
+        <field name="model">supplier.registration</field>
+        <field name="arch" type="xml">
+            <form string="Supplier Registration">
+                <sheet>
+                    <header>
+                        <button
+                    name="action_recommend_supplier"
+                    string="Recommend Supplier"
+                    type="object"
+                    class="oe_highlight"
+                    context="{'default_supplier_id': id,'default_reviewer_notes': reviewer_notes}"
+                    groups="supplier_management.group_supplier_management_reviewer"
+                    invisible="state not in ('draft')"
+                />
+                <button
+                    name="action_blacklist_supplier"
+                    string="Blacklist Supplier"
+                    type="object"
+                    class="oe_highlight"
+                    context="{'default_supplier_id': id,'default_reviewer_notes': reviewer_notes}"
+                    groups="supplier_management.group_supplier_management_reviewer"
+                    invisible="state not in ('draft')"
+                />
+<!--                        <button name="action_submit" string="Submit" type="object" class="oe_highlight"-->
+<!--                                invisible="state not in ('draft')"/>-->
+                        <button name="action_approve" string="Approve Supplier" type="object" class="oe_highlight"
+                                groups="supplier_management.group_supplier_management_approver" invisible="state not in ('recommended', 'blacklisted')"/>
+                        <button name="action_reject" string="Reject Supplier" type="object" class="oe_highlight"
+                                groups="supplier_management.group_supplier_management_approver" invisible="state not in ('recommended', 'blacklisted')"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <group>
+                        <group>
+                            <field name="company_name"/>
+                            <field name="company_type_category"/>
+                            <field name="trade_license_number"/>
+                            <field name="tax_identification_number"/>
+                        </group>
+                        <group>
+                            <field name="company_registered_address"/>
+                            <field name="email"/>
+                            <field name="commencement_date"/>
+                            <field name="expiry_date"/>
+                        </group>
+                    <group>
+                            <field name="reviewer_notes" placeholder="Enter reviewer notes..." readonly="1"/>
+                        <field name="state"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="contact_info" string="Contact Information">
+                            <group>
+                                <group string="Primary Contact" name="primary_contact">
+                                    <field name="contact_person_title"/>
+                                    <field name="contact_email"/>
+                                    <field name="contact_phone"/>
+                                </group>
+
+                                <group string="Finance Department Contact" name="finance_dept_contact">
+                                    <field name="finance_contact_title"/>
+                                    <field name="finance_contact_email"/>
+                                    <field name="finance_contact_phone"/>
+                                </group>
+
+                                <group string="Authorize Contact" name="authorized_contact">
+                                    <field name="authorized_person_name"/>
+                                    <field name="authorized_person_email"/>
+                                    <field name="authorized_person_phone"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="bank_info" string="Bank Information">
+                            <group>
+                                <group name="bank_details" string="Bank Details">
+                                    <field name="bank_name"/>
+                                    <field name="bank_address"/>
+                                    <field name="bank_swift_code"/>
+                                    <field name="iban"/>
+                                    <field name="company_address_as_per_bank"/>
+                                </group>
+                                <group name="account_details" string="Account Details">
+                                    <field name="account_name"/>
+                                    <field name="account_number"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="client_info" string="Client Information">
+                            <group>
+                                <group name="client_1" string="Client 1">
+                                    <field name="client_1_name"/>
+                                    <field name="client_1_address"/>
+                                    <field name="client_1_contact_email"/>
+                                    <field name="client_1_contact_phone"/>
+                                </group>
+                                <group name="client_2" string="client 2">
+                                    <field name="client_2_name"/>
+                                    <field name="client_2_address"/>
+                                    <field name="client_2_contact_email"/>
+                                    <field name="client_2_contact_phone"/>
+                                </group>
+                                <group name="client_3" string="client 3">
+                                    <field name="client_3_name"/>
+                                    <field name="client_3_address"/>
+                                    <field name="client_3_contact_email"/>
+                                    <field name="client_3_contact_phone"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="certification" string="Certification">
+                            <group>
+                                <field name="certification"/>
+                                <field name="certificate_number"/>
+                                <field name="certifying_body"/>
+                                <field name="award_date"/>
+                                <field name="certificate_expiry_date"/>
+                            </group>
+                        </page>
+
+                        <page name="document_upload" string="Document Upload">
+                            <group>
+
+                                <group>
+                                    <field name="trade_license_business_registration" widget="binary"/>
+                                    <field name="certificate_of_incorporation" widget="binary"/>
+                                    <field name="certificate_of_good_standing" widget="binary"/>
+                                    <field name="establishment_card" widget="binary"/>
+                                    <field name="vat_tax_certificate" widget="binary"/>
+                                </group>
+                                <group>
+                                    <field name="memorandum_of_association" widget="binary"/>
+                                    <field name="identification_document_for_authorized_person" widget="binary"/>
+                                    <field name="bank_letter_indicating_bank_account" widget="binary"/>
+                                    <field name="past_2_years_audited_financial_statements" widget="binary"/>
+                                    <field name="other_certifications" widget="binary"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Add Kanban View -->
+<record id="view_supplier_registration_kanban" model="ir.ui.view">
+    <field name="name">supplier.registration.kanban</field>
+    <field name="model">supplier.registration</field>
+    <field name="arch" type="xml">
+        <kanban default_group_by="state" class="o_kanban_small_column">
+            <field name="state"/>
+            <templates>
+                <t t-name="kanban-box">
+                    <!-- Kanban Card Template -->
+                    <div class="oe_kanban_global_click">
+                        <div class="o_kanban_card_content">
+                            <!-- Header -->
+                            <div class="row">
+                                <div class="col">
+                                    <strong>
+                                        <field name="company_name"/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <!-- Details -->
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <i class="fa fa-envelope" title="Email"/>
+                                    <field name="email"/>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col">
+                                    <i class="fa fa-phone" title="Phone"/>
+                                    <field name="phone"/>
+                                </div>
+                            </div>
+                            <!-- State Badge -->
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <span t-att-class="'badge bg-' + {
+                                        'draft': 'secondary',
+                                        'recommended': 'info',
+                                        'blacklisted': 'danger',
+                                        'approved': 'success',
+                                        'rejected': 'dark'
+                                    }[record.state.raw_value]">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+
+    <record id="supplier_registration_tree_view" model="ir.ui.view">
+        <field name="name">supplier.registration.tree</field>
+        <field name="model">supplier.registration</field>
+        <field name="arch" type="xml">
+            <tree string="Supplier Registration">
+                <field name="company_name"/>
+                <field name="email"/>
+                <field name="company_registered_address"/>
+                <field name="trade_license_number"/>
+
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="supplier_registration_search_view" model="ir.ui.view">
+        <field name="name">supplier.registration.search</field>
+        <field name="model">supplier.registration</field>
+        <field name="arch" type="xml">
+            <search string="Supplier Registration">
+                <field name="company_name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="trade_license_number"/>
+                <group expand="1" string="Group By">
+                    <filter string="Approval Status" name="approval_status"
+                            context="{'group_by':'state'}"/>
+                </group>
+                <filter string="Waiting for approval" name="recommended" domain="[('state','=','recommended')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_supplier_registration" model="ir.actions.act_window">
+        <field name="name">Supplier Registration</field>
+        <field name="res_model">supplier.registration</field>
+        <field name="view_mode">kanban,tree,form,search</field>
+        <field name="context">{'search_default_recommended':True}</field>
+
+    </record>
+    <!-- Actions for Lists -->
+    <record id="action_recommended_suppliers" model="ir.actions.act_window">
+        <field name="name">Recommended Suppliers</field>
+        <field name="res_model">supplier.registration</field>
+        <field name="domain">[('state', '=', 'recommended')]</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="action_blacklisted_suppliers" model="ir.actions.act_window">
+        <field name="name">Blacklisted Suppliers</field>
+        <field name="res_model">supplier.registration</field>
+        <field name="domain">[('state', '=', 'blacklisted')]</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_supplier_management_supplier_registration"
+          name="Supplier Registration"
+          parent="purchase.menu_procurement_management"
+          action="action_supplier_registration"
+          sequence="15"/>
+    <!-- Menu Items for Approvers -->
+    <menuitem
+        id="menu_recommended_suppliers"
+        name="Recommended Suppliers"
+        parent="purchase.menu_procurement_management"
+        action="action_recommended_suppliers"
+        sequence="20"
+        groups="supplier_management.group_supplier_management_approver"
+/>
+
+<menuitem
+    id="menu_blacklisted_suppliers"
+    name="Blacklisted Suppliers"
+    parent="purchase.menu_procurement_management"
+    action="action_blacklisted_suppliers"
+    sequence="25"
+    groups="supplier_management.group_supplier_management_approver"
+/>
+
+
+</odoo>

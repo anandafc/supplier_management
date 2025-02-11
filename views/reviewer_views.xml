@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!-- Wizard Views for Recommendation/Blacklist -->
+<record id="recommend_supplier_wizard_form" model="ir.ui.view">
+    <field name="name">recommend.supplier.wizard.form</field>
+    <field name="model">recommended.supplier</field>
+    <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name="supplier_id" readonly="1"/>
+                <field name="reviewer_notes"/>
+                <field name="recommendation_date"/>
+            </group>
+            <footer>
+                <button name="action_confirm_recommendation" string="Confirm" type="object" class="oe_highlight"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<record id="blacklist_supplier_wizard_form" model="ir.ui.view">
+    <field name="name">blacklist.supplier.wizard.form</field>
+    <field name="model">blacklisted.supplier</field>
+    <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name="supplier_id" readonly="1"/>
+                <field name="reviewer_notes"/>
+                <field name="blacklist_date"/>
+            </group>
+            <footer>
+                <button name="action_confirm_blacklist" string="Confirm" type="object" class="oe_highlight"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+    <!-- Actions to trigger wizards -->
+<record id="action_recommend_supplier" model="ir.actions.act_window">
+    <field name="name">Recommend Supplier</field>
+    <field name="res_model">recommended.supplier</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_supplier_id': active_id}</field>
+</record>
+
+<record id="action_blacklist_supplier" model="ir.actions.act_window">
+    <field name="name">Blacklist Supplier</field>
+    <field name="res_model">blacklisted.supplier</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_supplier_id': active_id}</field>
+</record>
+    </odoo>

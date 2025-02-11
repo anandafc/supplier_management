@@ -1,0 +1,12 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for RFP Number -->
+        <record id="seq_supplier_rfp" model="ir.sequence">
+            <field name="name">RFP Number Sequence</field>
+            <field name="code">supplier.rfp.sequence</field>
+            <field name="prefix">RFP/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

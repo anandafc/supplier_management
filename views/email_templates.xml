@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="supplier_registration_confirmation" model="mail.template">
+        <field name="name">Supplier Registration Success</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="subject">Supplier Registration Successful</field>
+        <field name="email_from">farhana.chowdhury@bjitacademy.com</field>
+        <field name="email_to">{{object.email}}</field>
+        <field name="body_html" type="html">
+            <h3>Dear
+                <span t-field="object.name"/>
+            </h3>
+            <p>Congratulations! Your Supplier Registration has been successfully completed.</p>
+            <p>You can now log in to your account using the credentials provided below. Please make sure to change your
+                password to something more secure after logging in.
+            </p>
+            <p>
+                <strong>Username:</strong>
+                <span t-field="object.email"/>
+            </p>
+            <p>
+                <strong>Password:</strong>
+                <span t-field="object.email"/>
+            </p>
+            <p>Thank you for registering with us. We look forward to working with you!</p>
+
+        </field>
+    </record>
+
+</odoo>
