@@ -1,4 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+import base64
+
 from odoo.addons.account.controllers.portal import CustomerPortal
 from odoo.addons.portal.controllers.portal import pager as portal_pager
 from odoo import http, _
@@ -54,21 +56,22 @@ class SupplierPortal(CustomerPortal):
                 'trade_license_business_registration', 'certificate_of_incorporation', 'certificate_of_good_standing',
                 'establishment_card', 'vat_tax_certificate', 'memorandum_of_association',
                 'identification_document_for_authorized_person', 'bank_letter_indicating_bank_account',
-                'past_2_years_audited_financial_statements', 'other_certifications'
+                'past_2_years_audited_financial_statements', 'other_certifications','company_logo'
             ]
 
-            file_vals = {}
             for field in file_fields:
-                if kw.get(field):
-                    file_vals[field] = kw.get(field).read()
+                file = kw.get(field)
+                if file and hasattr(file, 'read'):  # Check if it's a FileStorage object
+                    file_content = file.read()  # Read the file content as bytes
+                    vals[field] = base64.b64encode(file_content).decode(
+                        'utf-8')  # Encode to base64 and decode to string
+
             vals['state'] = 'submitted'
 
             if not error_list:
-                new_supplier = request.env['supplier.registration'].sudo().create(vals)
+                new_supplier = request.env['supplier_management.registration'].sudo().create(vals)
                 if new_supplier:
                     success_list.append("Supplier Registered Successfully")
-                if file_vals:
-                    new_supplier.write(file_vals)
 
         return request.render("supplier_management.new_supplier_registration_form_view_portal",
                               {'page_name': 'supplier_registration',

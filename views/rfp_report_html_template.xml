@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <!-- QWeb Template for RFP Report HTML -->
+        <template id="rfp_report_html_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="container">
+                        <!-- ✅ Section 1: Company Logo & Supplier Information -->
+                        <t t-set="company" t-value="request.env.company" />
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <t t-if="company.logo">
+                                <img t-att-src="'data:image/png;base64,%s' % company.logo.decode()" style="max-width: 120px;" />
+                            </t>
+                        </div>
+                        <hr style="border-top: 2px solid #000; margin: 10px 0;" />
+                        <h3 style="text-align: center; color: blue;">
+                            <t t-esc="doc.supplier_id.name or 'Vendor Report'" />
+                        </h3>
+                       <!-- Supplier Information (in one column) -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Supplier Information</h4>
+                        <p><strong>Email:</strong> <t t-esc="doc.supplier_id.email or 'N/A'" /></p>
+                        <p><strong>Phone:</strong> <t t-esc="doc.supplier_id.phone or 'N/A'" /></p>
+                        <p><strong>Address:</strong> <t t-esc="doc.supplier_id.company_registered_address or 'N/A'" /></p>
+                    </div>
+
+                    <!-- Bank Information (in another column) -->
+                    <div class="col-md-6">
+                        <h4>Bank Information</h4>
+                        <p><strong>Bank Name:</strong> <t t-esc="doc.supplier_id.bank_ids and doc.supplier_id.bank_ids[0].bank_id.name or 'N/A'" /></p>
+                        <p><strong>Account Name:</strong> <t t-esc="doc.supplier_id.bank_ids and doc.supplier_id.bank_ids[0].acc_holder_name or 'N/A'" /></p>
+                        <p><strong>Account Number:</strong> <t t-esc="doc.supplier_id.bank_ids and doc.supplier_id.bank_ids[0].acc_number or 'N/A'" /></p>
+                        <p><strong>IBAN:</strong> <t t-esc="doc.supplier_id.bank_ids and doc.supplier_id.bank_ids[0].bank_id.iban or 'N/A'" /></p>
+                        <p><strong>SWIFT Code:</strong> <t t-esc="doc.supplier_id.bank_ids and doc.supplier_id.bank_ids[0].bank_id.bank_swift_code or 'N/A'" /></p>
+                    </div>
+                </div>
+        <!-- List Approved RFQs for Supplier -->
+                <h3>Approved RFQs</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>RFP Number</th>
+                            <th>Creation Date</th>
+                            <th>Required Date</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through approved RFQs -->
+                        <t t-set="approved_rfps" t-value="doc._get_approved_rfps()"/>
+
+                        <t t-set="net_total" t-value="0" />
+                        <t t-foreach="approved_rfps" t-as="rfp">
+                            <tr>
+                                <td t-esc="rfp.rfp_number" />
+                                <td t-esc="rfp.create_date.strftime('%d/%m/%Y')" />
+                                <td t-esc="rfp.required_date.strftime('%d/%m/%Y')" />
+                                <td t-esc="rfp.total_amount" />
+                            </tr>
+
+                            <!-- Product Line Summary -->
+                            <t t-set="product_lines" t-value="rfp.product_line_ids"/>
+                            <t t-if="product_lines">
+                                <tr>
+                                    <td colspan="4">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product Name</th>
+                                                    <th>Unit Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Delivery Charge</th>
+                                                    <th>Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="product_lines" t-as="line">
+                                                    <tr>
+                                                        <td t-esc="line.product_id.name"/>
+                                                        <td t-esc="line.unit_price"/>
+                                                        <td t-esc="line.quantity"/>
+                                                        <td t-esc="line.delivery_charges"/>
+                                                        <td t-esc="line.price_subtotal"/>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+
+                <!-- Net Total -->
+                <h4 style="text-align: right;">Net Total: <t t-esc="net_total" /></h4>
+                        <!--  Company Contact Information -->
+                        <h3>Company Contact Information</h3>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td t-esc="company.email or 'No Email Available'" />
+                            </tr>
+                            <tr>
+                                <td><strong>Phone:</strong></td>
+                                <td t-esc="company.phone or 'No Phone Available'" />
+                            </tr>
+                            <tr>
+                                <td><strong>Address:</strong></td>
+                                <td t-esc="company.partner_id.contact_address or 'No Address Available'" />
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <!-- Report Action -->
+        <record id="action_rfp_report_html" model="ir.actions.report">
+            <field name="name">RFP Report</field>
+            <field name="model">supplier_management.rfp.report.wizard</field>
+            <field name="report_type">qweb-html</field>
+            <field name="report_name">supplier_management.rfp_report_html_template</field>
+            <field name="report_file">supplier_management.rfp_report_html_template</field>
+<!--            <field name="binding_model_id" ref="supplier_management.model_supplier_management_rfp_report_wizard"/>-->
+            <field name="attachment_use">False</field>
+        </record>
+
+</odoo>

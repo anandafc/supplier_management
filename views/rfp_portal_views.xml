@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Inherit the Portal Homepage -->
+        <template id="portal_my_rfp_home" inherit_id="portal.portal_my_home">
+            <xpath expr="//div[@id='portal_vendor_category']" position="inside">
+                <!-- My RFPs Menu -->
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">Request for Purchase</t>
+                    <t t-set="placeholder_count" t-value="'rfp_count'"/>
+                    <t t-set="text">Create your quotations</t>
+                    <t t-set="url" t-value="'/my/rfps'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+            <xpath expr="//div[@id='portal_vendor_category']" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'sale/static/src/img/bag.svg'"/>
+                    <t t-set="title">My RFQs</t>
+                    <t t-set="placeholder_count" t-value="'rfq_count'"/>
+                    <t t-set="text">View and manage your RFQs</t>
+                    <t t-set="url" t-value="'/my/rfqs'"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+        </template>
+
+
+   <template id="portal_my_rfps" name="My RFPs">
+    <t t-call="portal.portal_layout">
+        <!-- Searchbar -->
+        <t t-call="portal.portal_searchbar">
+            <t t-set="title">My RFPs</t>
+        </t>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <h1 class="text-center mb-4">My RFPs</h1>
+                    <!-- RFP Table -->
+                    <table class="table table-striped mt-3">
+                        <thead style="background-color: #4A90E2; color: #fff;">
+                            <tr>
+                                <th style="width: 30%;">RFP Name</th>
+                                <th style="width: 20%;">Required Date</th>
+                                <th style="width: 20%;">Total Amount</th>
+                                <th style="width: 20%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rfps" t-as="rfp">
+                                <!-- Add a condition to check if the RFP is approved -->
+                                <t t-if="rfp.status == 'approved'">
+                                    <tr>
+                                        <td>
+                                            <a t-att-href="'/my/rfp/%s' % rfp.id">
+                                                <t t-esc="rfp.rfp_number"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <t t-esc="rfp.required_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="rfp.total_amount"/>
+                                        </td>
+                                        <td>
+                                            <a t-att-href="'/my/rfp/%s' % rfp.id" class="btn btn-primary btn-sm">View</a>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </t>
+</template>
+
+
+
+
+
+
+     <template id="rfp_form_view_template" name="Portal RFP Form">
+    <t t-call="portal.portal_layout">
+        <t t-set="title" t-value="'Request for Proposal'"/>
+
+        <div class="container mt-5">
+            <!-- Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="m-0"><t t-esc="rfp.rfp_number"/></h1>
+                <span class="badge bg-light text-dark custom-badge">
+                    <t t-esc="rfp.status"/>
+                </span>
+            </div>
+
+            <!-- RFP Details Card -->
+            <div class="card custom-card mt-4">
+                <h3 class="custom-title">RFP Details</h3>
+                <div class="row">
+                    <div class="col-md-6 mt-3">
+                        <strong>RFP Number:</strong>
+                        <span class="text-dark fs-5"><t t-esc="rfp.rfp_number"/></span>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <strong>Required Date:</strong>
+                        <span class="text-dark"><t t-esc="rfp.required_date"/></span>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- Quotation Form -->
+            <div class="card custom-card mt-4">
+                <h3 class="custom-title">Submit Your Quotation</h3>
+                <form t-attf-action="/my/rfp/{{rfp.id}}/submit_rfq" method="POST">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+
+
+                    <!-- Product Lines Table -->
+                    <div class="table-responsive mt-4">
+<!--                        <h4 class="custom-title"><i class="fa fa-box"></i> Product Lines</h4>-->
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price ($)</th>
+                                    <th>Delivery Charges ($)</th>
+                                    <th>Subtotal ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <t t-foreach="rfp.product_line_ids" t-as="line">
+                                    <tr>
+                                        <td>
+                                            <!-- Display product image (base64 encoding) -->
+                                            <t t-if="line.product_id.image_1920">
+                                                <img t-att-src="'data:image/png;base64,' + line.product_id.image_1920.decode('utf-8')" width="50" height="50" class="img-thumbnail"/>
+                                            </t>
+                                            <t t-else="">No Image</t>
+                                            <br/>
+                                            <t t-esc="line.product_id.name"/>
+                                        </td>
+                                        <td><t t-esc="line.description or 'No Description'"/></td>
+                                        <td><t t-esc="line.quantity"/></td>
+                                        <td><input type="number" name="price_unit_{{line.id}}" class="form-control price-input" required="1"/>
+                                        <div class="error-message" style="display:none; color: red; font-size: 0.875rem;"></div></td>
+                                        <td><input type="number" name="delivery_charge_{{line.id}}" class="form-control delivery-charge-input" required="1"/>
+                                        <div class="error-message" style="display:none; color: red; font-size: 0.875rem;"></div></td>
+                                        <td><t t-esc="line.price_subtotal"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Warranty Period (months)</label>
+                            <input type="number" name="warranty_period" class="form-control" required="" placeholder="Enter warranty period"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Expected Delivery Date</label>
+                            <input type="date" name="expected_delivery_date" class="form-control" required=""/>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label fw-bold">Terms &amp; Conditions</label>
+                        <textarea name="terms_conditions" class="form-control" rows="3" placeholder="Enter any special terms and conditions"></textarea>
+                    </div>
+                    <style>
+                        /* Custom Styles for Submit Button */
+.btn-custom {
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text */
+    font-size: 1.2rem; /* Larger font size */
+    font-weight: bold; /* Bold text */
+    padding: 12px 30px; /* Add padding for a larger button */
+    border-radius: 50px; /* Rounded corners */
+    border: 2px solid #0056b3; /* Blue border */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    border-color: #003366; /* Darker border color */
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.btn-custom:focus {
+    outline: none; /* Remove the outline on focus */
+    box-shadow: 0 0 10px rgba(0, 91, 187, 0.6); /* Add a blue glow effect */
+}
+                        .error-message {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 5px;
+    display: none; /* Initially hidden */
+}
+
+                    </style>
+
+                    <div class="d-flex justify-content-center mt-4">
+                        <button type="submit" class="btn btn-custom">
+                            <i class="fa fa-paper-plane"></i> Submit RFQ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- JavaScript for Dynamic Subtotal Calculation -->
+        <script>
+      document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('rfq-form');
+
+    // Function to validate that inputs do not accept negative values
+    function validateNegativeInput(input) {
+        let value = parseFloat(input.value); // Convert input value to a float
+
+        // Get the error message container (the div below the input)
+        const errorMessage = input.closest('td').querySelector('.error-message');
+
+        // If value is NaN (not a number) or negative, show an error
+        if (isNaN(value) || value &lt; 0) {
+            // Show error message
+            errorMessage.textContent = "Negative values are not allowed.";
+            errorMessage.style.display = 'block'; // Display error message
+            input.setCustomValidity("Negative values or invalid numbers are not allowed.");
+            input.reportValidity(); // Show the error message
+            return false; // Return false to indicate invalid input
+        } else {
+            // Clear error message
+            errorMessage.textContent = "";
+            errorMessage.style.display = 'none'; // Hide error message
+            input.setCustomValidity(""); // Clear the custom validity
+            return true; // Return true to indicate valid input
+        }
+    }
+
+    // Function to update subtotal dynamically
+    function updateSubtotal(row) {
+        let quantity = parseFloat(row.querySelector("td:nth-child(3)").textContent.trim()) || 0;
+        let unitPriceInput = row.querySelector("input[name^='price_unit_']");
+        let deliveryChargeInput = row.querySelector("input[name^='delivery_charge_']");
+
+        let unitPrice = parseFloat(unitPriceInput.value) || 0;
+        let deliveryCharge = parseFloat(deliveryChargeInput.value) || 0;
+
+        // Validate inputs before calculating subtotal
+        if (!validateNegativeInput(unitPriceInput) || !validateNegativeInput(deliveryChargeInput)) {
+            // Skip calculation if any input is invalid (negative)
+            return;
+        }
+
+        // Calculate subtotal
+        let subtotal = (quantity * unitPrice) + deliveryCharge;
+
+        // Update the subtotal cell
+        row.querySelector("td:last-child").textContent = subtotal.toFixed(2);
+    }
+
+    // Attach event listeners for input validation and subtotal calculation
+    document.querySelectorAll("input[name^='price_unit_'], input[name^='delivery_charge_']").forEach(input => {
+        input.addEventListener("input", function () {
+            let row = this.closest("tr"); // Get the closest table row
+            updateSubtotal(row); // Update the subtotal dynamically
+        });
+    });
+
+    // Prevent form submission if there's a negative value
+    form.addEventListener('submit', function (event) {
+        let valid = true;
+
+        // Check if any input field has a negative value
+        document.querySelectorAll("input[name^='price_unit_'], input[name^='delivery_charge_']").forEach(input => {
+            if (parseFloat(input.value) &lt; 0) {
+                valid = false;
+            }
+        });
+
+        // If any input is invalid, prevent form submission and show an alert
+        if (!valid) {
+            event.preventDefault();  // Prevent form submission
+            alert("Please ensure that no field has a negative value.");
+        }
+    });
+});
+
+
+        </script>
+    </t>
+</template>
+        <template id="portal_my_rfqs" name="My RFQs">
+    <t t-call="portal.portal_layout">
+        <t t-set="title">My RFQs</t>
+
+        <div class="container mt-5">
+            <h2>My RFQs</h2>
+            <table class="table table-striped mt-4">
+                <thead style="background-color: #4A90E2; color: #fff;">
+                    <tr>
+                        <th style="width: 25%;">RFP Number</th>
+                        <th style="width: 20%;">Supplier</th>
+                        <th style="width: 20%;">Creation Date</th>
+                        <th style="width: 20%;">Required Date</th>
+                        <th style="width: 20%;">Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="rfqs" t-as="rfq">
+                        <tr>
+                            <td><t t-esc="rfq.rfp_id.rfp_number"/></td>
+                            <td><t t-esc="rfq.partner_id.name"/></td>
+                            <td><t t-esc="rfq.create_date.strftime('%d/%m/%Y')"/></td>
+                            <td><t t-esc="rfq.rfp_id.required_date.strftime('%d/%m/%Y')"/></td>
+                            <td><t t-esc="rfq.total_amount"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+<!--            &lt;!&ndash; Pagination &ndash;&gt;-->
+<!--            <div class="pagination">-->
+<!--                <t t-if="pager['page_count']">-->
+<!--                    <t t-foreach="range(1, pager['page_count'] + 1)" t-as="page">-->
+<!--                        <a t-att-href="'/my/rfqs?page=%s' % page">Page <t t-esc="page"/></a>-->
+<!--                    </t>-->
+<!--                </t>-->
+<!--            </div>-->
+        </div>
+    </t>
+</template>
+
+
+    </data>
+</odoo>

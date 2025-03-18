@@ -13,58 +13,59 @@
             </xpath>
         </template>
 
-        <!-- Supplier OTP Verification Page -->
-        <template id="supplier_otp_verification_template">
-            <t t-call="portal.portal_layout">
-                <div class="container mt-5">
-                    <h1 class="text-center mb-4 text-uppercase text-primary">Email Signup</h1>
+       <!-- Supplier OTP Verification Page -->
+<template id="supplier_otp_verification_template">
+    <t t-call="portal.portal_layout">
+        <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f8f9fa;">
+            <div style="width: 100%; max-width: 500px;">
+                <div style="background: #fff; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                    <h2 style="text-align: center; margin-bottom: 20px; text-transform: uppercase; color: #007bff; font-weight: bold;">Email Signup</h2>
 
                     <!-- Error Message Display -->
                     <t t-if="error_message">
-                        <div class="alert alert-danger" role="alert">
+                        <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 10px;">
                             <t t-esc="error_message" />
                         </div>
                     </t>
 
                     <!-- Success Message Display -->
                     <t t-if="success_message">
-                        <div class="alert alert-success" role="alert">
+                        <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 10px;">
                             <t t-esc="success_message" />
                         </div>
                     </t>
 
-                    <div class="card shadow-sm rounded bg-white p-4">
-                        <!-- Form to Submit Email -->
-                        <form method="POST" action="/my/supplier2/request">
-                            <input type="hidden" name="csrf_token"
-                                t-att-value="request.csrf_token()" />
-                            <div class="mb-3">
-                                <label class="form-label">Supplier Email</label>
-                                <input type="email" name="supplier_email" class="form-control"
-                                    placeholder="Enter your email" />
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Send OTP</button>
-                        </form>
+                    <!-- Form to Submit Email -->
+                    <form method="POST" action="/my/supplier2/request">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-weight: 600;">Supplier Email</label>
+                            <input type="email" name="supplier_email" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ced4da;" placeholder="Enter your email" required="True" />
+                        </div>
+                        <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;">Send OTP</button>
+                    </form>
 
-                        <!-- OTP Verification Section -->
-                        <t t-if="display_otp_section">
-                            <form method="POST" action="/my/supplier2/validate" class="mt-4">
-                                <input type="hidden" name="csrf_token"
-                                    t-att-value="request.csrf_token()" />
-                                <input type="hidden" name="supplier_email"
-                                    t-att-value="supplier_email" />
-                                <div class="mb-3">
-                                    <label class="form-label">Enter OTP</label>
-                                    <input type="text" name="entered_otp" class="form-control"
-                                        placeholder="Enter OTP" />
-                                </div>
-                                <button type="submit" class="btn btn-success w-100 mt-2">Verify OTP</button>
-                            </form>
-                        </t>
-                    </div>
+                    <!-- OTP Verification Section -->
+                    <t t-if="display_otp_section">
+                        <form method="POST" action="/my/supplier2/validate" style="margin-top: 20px;">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                            <input type="hidden" name="supplier_email" t-att-value="supplier_email" />
+                            <div style="margin-bottom: 15px;">
+                                <label style="font-weight: 600;">Enter OTP</label>
+                                <input type="text" name="entered_otp" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ced4da;" placeholder="Enter OTP" required="True" />
+                            </div>
+                            <button type="submit" style="width: 100%; padding: 12px; background-color: #28a745; color: white; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;">Verify OTP</button>
+                        </form>
+                    </t>
                 </div>
-            </t>
-        </template>
+            </div>
+        </div>
+    </t>
+</template>
+
+
+
+
 
     </data>
 </odoo>

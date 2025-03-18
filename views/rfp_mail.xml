@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="email_template_rfp_submitted" model="mail.template">
+        <field name="name">RFP Submitted Notification</field>
+        <field name="model_id" ref="model_rfp_request"/>
+        <field name="subject">RFP {{ object.name }} Submitted</field>
+        <field name="body_html">
+            <div>
+                <p>Dear Approver,</p>
+                <p>RFP <strong>{{ object.name }}</strong> has been submitted for approval.</p>
+            </div>
+        </field>
+    </record>
+</odoo>

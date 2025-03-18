@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+
+        <!-- Action for the dashboard -->
+        <record id="supplier_dashboard_action" model="ir.actions.client">
+            <field name="name">Supplier Dashboard</field>
+            <field name="tag">supplier_dashboard</field>
+        </record>
+
+        <!-- Menu item for the dashboard -->
+        <menuitem id="supplier_dashboard_menu"
+                  name="Supplier Dashboard"
+                  parent="menu_supplier_management_root"
+                  action="supplier_dashboard_action"/>
+    </data>
+</odoo>

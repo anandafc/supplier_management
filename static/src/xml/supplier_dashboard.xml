@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="supplier_management.SupplierDashboard" owl="1">
+        <div class="supplier-dashboard p-6 bg-gray-100 min-h-screen">
+            <div class="dashboard-header mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Supplier Dashboard</h1>
+
+                <!-- Main Content Container -->
+                <div class="dashboard-content" style="overflow: hidden;">
+                    <!-- Left Side: Filters, Stats, and Product Breakdown -->
+                    <div class="left-side" style="width: 60%; float: left; padding-right: 20px;">
+                        <!-- Filters Section -->
+                        <div class="filters bg-light p-8 rounded-lg shadow-lg mb-8">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                <!-- Supplier Selection -->
+                                <div class="filter-group bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Supplier</label>
+                                    <select t-on-change="onSupplierChange" class="filter-select">
+                                        <option value="">All Suppliers</option>
+                                        <t t-foreach="state.suppliers" t-as="supplier" t-key="supplier.id">
+                                            <option t-att-value="supplier.id" t-att-selected="state.supplierId === supplier.id">
+                                                <t t-esc="supplier.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+
+                                <!-- Date Range Selection -->
+                                <div class="filter-group bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                                    <select t-on-change="onDateRangeChange" class="filter-select">
+                                        <option value="today" t-att-selected="state.dateRange === 'today'">Today</option>
+                                        <option value="this_week" t-att-selected="state.dateRange === 'this_week'">This Week</option>
+                                        <option value="this_month" t-att-selected="state.dateRange === 'this_month'">This Month</option>
+                                        <option value="last_month" t-att-selected="state.dateRange === 'last_month'">Last Month</option>
+                                        <option value="this_year" t-att-selected="state.dateRange === 'this_year'">This Year</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add space between filters and stats -->
+                        <div class="mb-6"></div>  <!-- Line break between filters and stats cards -->
+
+                        <!-- Stats Boxes Section -->
+                        <div class="stats-boxes grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
+                            <!-- Approved RFQs Box -->
+                            <div class="stat-box bg-box p-8 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">Approved RFQs</h3>
+                                <p class="text-5xl font-bold text-indigo-600">
+                                    <t t-esc="state.dashboardData.approvedRfqCount"/>
+                                </p>
+                            </div>
+
+                            <!-- Total Amount Box -->
+                            <div class="stat-box bg-box p-8 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">Total Amount</h3>
+                                <p class="text-5xl font-bold text-indigo-600">
+                                    <t t-esc="state.dashboardData.totalAmount"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Add space between stats cards and product breakdown -->
+                        <div class="mb-6"></div>  <!-- Line break between stats and product breakdown -->
+
+                        <!-- Product Breakdown Table -->
+                        <div class="product-breakdown bg-white p-6 rounded-lg shadow-lg">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Product Breakdown</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Product</th>
+                                            <th class="text-right py-3 px-4 text-sm font-semibold text-gray-600">Quantity</th>
+                                            <th class="text-right py-3 px-4 text-sm font-semibold text-gray-600">Product Image</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <t t-foreach="Object.entries(state.dashboardData.productBreakdown)" t-as="entry" t-key="entry[0]">
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="py-4 px-4 text-gray-800 text-sm"><t t-esc="entry[0]"/></td>
+                                                <td class="text-right py-4 px-4 text-gray-800 text-sm"><t t-esc="entry[1]"/></td>
+                                                <td class="text-right py-4 px-4">
+                                                    <!-- Check if the image exists -->
+                                                    <t t-if="state.dashboardData.productImages[entry[0]]">
+                                                        <img t-att-src="state.dashboardData.productImages[entry[0]]" alt="Product Image" class="small-img"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <img src="/web/static/src/img/placeholder.png" alt="Placeholder Image" class="small-img"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Graphical Representation -->
+                    <div class="right-side" style="width: 40%; float: left;">
+                        <!-- Approved RFQs Chart -->
+                        <div class="approved-rfq-chart bg-white p-6 rounded-lg shadow-md mb-8">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Approved RFQs</h3>
+                            <canvas id="approvedRfqChart"></canvas>
+                        </div>
+
+                        <!-- Product Breakdown Chart -->
+                        <div class="product-breakdown-chart bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Product Breakdown</h3>
+                            <canvas id="productBreakdownChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

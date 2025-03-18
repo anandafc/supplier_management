@@ -27,7 +27,7 @@ class SupplierOTPPortal(CustomerPortal):
             })
 
         # Generate OTP
-        otp_entry = request.env['supplier.otp'].sudo().create_otp(supplier_email)
+        otp_entry = request.env['supplier_management.otp'].sudo().create_otp(supplier_email)
         if not otp_entry:
             return request.render('supplier_management.supplier_otp_verification_template', {
                 'error_message': 'Unable to generate OTP. Please try again.',
@@ -59,7 +59,7 @@ class SupplierOTPPortal(CustomerPortal):
             })
 
         # Validate OTP
-        is_valid = request.env['supplier.otp'].sudo().verify_otp(supplier_email, entered_otp)
+        is_valid = request.env['supplier_management.otp'].sudo().verify_otp(supplier_email, entered_otp)
         if is_valid:
             return request.redirect('/my/supplier2/register?email=%s' % supplier_email)
 

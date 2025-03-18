@@ -124,32 +124,38 @@
                     </t>
                     <form id="multi-step-form" method="POST" action="/my/supplier2/register" enctype="multipart/form-data">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
                         <!-- Step 1: Company Information -->
                         <div class="form-step" id="step-1">
-                            <h3 style="text-align: center;">Section 1: Company Information</h3>
-                            <div>
-                                <div class="row col-md-12">
-                                    <div class="col-md-6">
+
+
+                                <div class="row">
+
+                                    <div class="col-md-6" style="padding-right: 20px;">
+                                        <br></br>
+                                        <h3 style="text-align: center; font-size: 24px; font-weight: 600;">Company Information</h3>
+
+
                                         <div class="form-group">
-                                            <label for="company_name">Company Name</label>
-                                            <input type="text" class="form-control" id="company_name"
-                                                   name="company_name"
-                                                   placeholder="Enter company name"
-                                                   style="background-color: #ccffcc;"/>
-                                        </div>
+    <label for="company_name" style="font-size: 16px; font-weight: 500; color: #333;">Company Name</label>
+    <input type="text" class="form-control" id="company_name" name="company_name"
+           placeholder="Enter company name"
+           style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
+</div>
+
                                         <div class="form-group">
-                                            <label for="email">Company Email</label>
+                                            <label for="email" style="font-size: 16px; font-weight: 500; color: #333;">Company Email</label>
                                             <input type="text" class="form-control" id="email"
                                                    name="email"
                                                    placeholder="Enter company email"
-                                                   style="background-color: #ccffcc;"/>
+                                                   style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                         <div class="form-group">
-                                            <label for="company_type_category">Company Type (LLC, Corporation, etc.)
+                                            <label for="company_type_category" style="font-size: 16px; font-weight: 500; color: #333;">Company Type (LLC, Corporation, etc.)
                                             </label>
                                             <select class="form-control" id="company_type_category"
                                                     name="company_type_category" required="true"
-                                                    style="background-color: #ccffcc;">
+                                                    style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                                                 <option value="LLC">LLC</option>
                                                 <option value="corporate">Corporation</option>
                                                 <option value="sole_proprietorship">Sole Proprietorship</option>
@@ -158,175 +164,174 @@
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label for="company_registered_address">Company Registered Address</label>
+                                            <label for="company_registered_address" style="font-size: 16px; font-weight: 500; color: #333;">Company Registered Address</label>
                                             <input type="text" class="form-control" id="company_registered_address"
                                                    name="company_registered_address"
-                                                   placeholder="Enter registered address" style="background-color: #ccffcc;"
+                                                   placeholder="Enter registered address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="company_alternate_address">Company Alternate Address</label>
+                                            <label for="company_alternate_address" style="font-size: 16px; font-weight: 500; color: #333;">Company Alternate Address</label>
                                             <input type="text" class="form-control" id="company_alternate_address"
                                                    name="company_alternate_address"
-                                                   placeholder="Enter alternate address" style="background-color: #ccffcc;"/>
+                                                   placeholder="Enter alternate address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
+
                                         <div class="form-group">
-                                            <label for="phone">Company Phone</label>
+                                            <label for="phone" style="font-size: 16px; font-weight: 500; color: #333;">Company Phone</label>
                                             <input type="text" class="form-control" id="phone"
                                                    name="phone"
                                                    placeholder="Enter company phone"
-                                                   style="background-color: #ccffcc;"/>
+                                                   style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                         <div class="form-group">
-                                            <label for="trade_license_number">Trade License Number</label>
+                                            <label for="trade_license_number" style="font-size: 16px; font-weight: 500; color: #333;">Trade License Number</label>
                                             <input type="text" class="form-control" id="trade_license_number"
                                                    name="trade_license_number" placeholder="Enter trade license number"
-                                                   style="background-color: #ccffcc;"
+                                                   style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="tax_identification_number">Tax Identification Number (TIN)
+                                            <label for="tax_identification_number" style="font-size: 16px; font-weight: 500; color: #333;">Tax Identification Number (TIN)
                                             </label>
                                             <input type="text" class="form-control" id="tax_identification_number"
                                                    name="tax_identification_number" placeholder="Enter TIN"
-                                                   style="background-color: #ccffcc;"/>
+                                                   style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                         <div class="form-group">
-                                            <label for="commencement_date">Commencement Date</label>
+                                            <label for="commencement_date" style="font-size: 16px; font-weight: 500; color: #333;">Commencement Date</label>
                                             <input type="date" class="form-control" id="commencement_date"
-                                                   name="commencement_date" style="background-color: #ccffcc;"
+                                                   name="commencement_date" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="expiry_date">Expiry Date</label>
+                                            <label for="expiry_date" style="font-size: 16px; font-weight: 500; color: #333;">Expiry Date</label>
                                             <input type="date" class="form-control" id="expiry_date" name="expiry_date"
-                                             style="background-color: #ccffcc;"/>
+                                             style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row col-md-12">
-                                    <div class="col-md-4">
+
+                                <div class="col-md-6" style="padding-left: 20px;">
+                                    <div class="row-md-4">
                                         <!-- Contact Person Information -->
                                         <p></p>
                                         <h4>Contact Person Information</h4>
                                         <div class="form-group">
-                                            <label for="contact_person_title">Contact Person’s Title</label>
+                                            <label for="contact_person_title" style="font-size: 16px; font-weight: 500; color: #333;">Contact Person’s Title</label>
                                             <input type="text" class="form-control" id="contact_person_title"
                                                    name="contact_person_title"
-                                                   placeholder="Enter contact person's title" style="background-color: #ccffcc;"
+                                                   placeholder="Enter contact person's title" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="contact_email">Contact Email</label>
+                                            <label for="contact_email" style="font-size: 16px; font-weight: 500; color: #333;">Contact Email</label>
                                             <input type="email" class="form-control" id="contact_email"
                                                    name="contact_email"
-                                                   placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                                   placeholder="Enter contact email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                         <div class="form-group">
-                                            <label for="contact_phone">Contact Phone</label>
+                                            <label for="contact_phone" style="font-size: 16px; font-weight: 500; color: #333;">Contact Phone</label>
                                             <input type="tel" class="form-control" id="contact_phone"
                                                    name="contact_phone"
-                                                   placeholder="Enter contact phone number" style="background-color: #ccffcc;"/>
+                                                   placeholder="Enter contact phone number" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="row-md-4">
                                         <!-- Finance Department Information -->
                                         <p></p>
                                         <h4>Finance Department Information</h4>
                                         <div class="form-group">
-                                            <label for="finance_contact_title">Contact Person’s Title</label>
+                                            <label for="finance_contact_title" style="font-size: 16px; font-weight: 500; color: #333;">Contact Person’s Title</label>
                                             <input type="text" class="form-control" id="finance_contact_title"
                                                    name="finance_contact_title"
-                                                   placeholder="Enter finance contact person's title" style="background-color: #ccffcc;"
+                                                   placeholder="Enter finance contact person's title" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="finance_contact_email">Contact Email</label>
+                                            <label for="finance_contact_email" style="font-size: 16px; font-weight: 500; color: #333;">Contact Email</label>
                                             <input type="email" class="form-control" id="finance_contact_email"
                                                    name="finance_contact_email"
-                                                   placeholder="Enter finance contact email" style="background-color: #ccffcc;"
+                                                   placeholder="Enter finance contact email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="finance_contact_phone">Contact Phone</label>
+                                            <label for="finance_contact_phone" style="font-size: 16px; font-weight: 500; color: #333;">Contact Phone</label>
                                             <input type="tel" class="form-control" id="finance_contact_phone"
                                                    name="finance_contact_phone"
-                                                   placeholder="Enter finance contact phone number" style="background-color: #ccffcc;"
+                                                   placeholder="Enter finance contact phone number" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="row-md-4">
                                         <!-- Authorized Person Information -->
                                         <p></p>
                                         <h4>Authorized Person Information</h4>
                                         <div class="form-group">
-                                            <label for="authorized_person_name">Name of Authorized Person</label>
+                                            <label for="authorized_person_name" style="font-size: 16px; font-weight: 500; color: #333;">Name of Authorized Person</label>
                                             <input type="text" class="form-control" id="authorized_person_name"
                                                    name="authorized_person_name"
-                                                   placeholder="Enter authorized person name" style="background-color: #ccffcc;"
+                                                   placeholder="Enter authorized person name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="authorized_person_email">Contact Email</label>
+                                            <label for="authorized_person_email" style="font-size: 16px; font-weight: 500; color: #333;">Contact Email</label>
                                             <input type="email" class="form-control" id="authorized_person_email"
                                                    name="authorized_person_email"
-                                                   placeholder="Enter authorized person’s email" style="background-color: #ccffcc;"
+                                                   placeholder="Enter authorized person’s email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                             />
                                         </div>
                                         <div class="form-group">
-                                            <label for="authorized_person_phone">Contact Phone</label>
+                                            <label for="authorized_person_phone" style="font-size: 16px; font-weight: 500; color: #333;">Contact Phone</label>
                                             <input type="tel" class="form-control" id="authorized_person_phone"
                                                    name="authorized_person_phone"
-                                                   placeholder="Enter authorized person’s phone number" style="background-color: #ccffcc;"/>
+                                                   placeholder="Enter authorized person’s phone number" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
+                                </div>
                             <button type="button" class="btn btn-primary" id="next-1">Next</button>
                         </div>
                         <!-- Step 2: Financial Information -->
                         <div class="form-step" id="step-2" style="display:none;">
-                            <h3>Section 2: Financial Information</h3>
+                            <h3>Financial Information</h3>
                             <!-- Financial Information Fields (as already defined) -->
                             <h4>Bank Account Information</h4>
                             <div class="form-group">
-                                <label for="bank_name">Bank Name</label>
+                                <label for="bank_name" style="font-size: 16px; font-weight: 500; color: #333;">Bank Name</label>
                                 <input type="text" class="form-control" id="bank_name" name="bank_name"
-                                       placeholder="Enter bank name" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter bank name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="bank_address">Bank Address</label>
+                                <label for="bank_address" style="font-size: 16px; font-weight: 500; color: #333;">Bank Address</label>
                                 <input type="text" class="form-control" id="bank_address" name="bank_address"
-                                       placeholder="Enter bank address" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter bank address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="bank_swift_code">Bank SWIFT Code</label>
+                                <label for="bank_swift_code" style="font-size: 16px; font-weight: 500; color: #333;">Bank SWIFT Code</label>
                                 <input type="text" class="form-control" id="bank_swift_code" name="bank_swift_code"
-                                       placeholder="Enter SWIFT code" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter SWIFT code" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="account_name">Account Name</label>
+                                <label for="account_name" style="font-size: 16px; font-weight: 500; color: #333;">Account Name</label>
                                 <input type="text" class="form-control" id="account_name" name="account_name"
-                                       placeholder="Enter account name" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter account name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="account_number">Account Number</label>
+                                <label for="account_number" style="font-size: 16px; font-weight: 500; color: #333;">Account Number</label>
                                 <input type="text" class="form-control" id="account_number" name="account_number"
-                                       placeholder="Enter account number" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter account number" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="iban">IBAN</label>
-                                <input type="text" class="form-control" id="iban" name="iban" placeholder="Enter IBAN" style="background-color: #ccffcc;"
+                                <label for="iban" style="font-size: 16px; font-weight: 500; color: #333;">IBAN</label>
+                                <input type="text" class="form-control" id="iban" name="iban" placeholder="Enter IBAN" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                 />
                             </div>
                             <div class="form-group">
-                                <label for="company_address_as_per_bank">Company Address as per bank records</label>
+                                <label for="company_address_as_per_bank" style="font-size: 16px; font-weight: 500; color: #333;">Company Address as per bank records</label>
                                 <input type="text" class="form-control" id="company_address_as_per_bank"
                                        name="company_address_as_per_bank"
-                                       placeholder="Enter bank-recorded company address" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter bank-recorded company address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
 
                             <button type="button" class="btn btn-secondary" id="prev-2">Previous</button>
@@ -334,84 +339,84 @@
                         </div>
                         <!-- Step 3: Client References -->
                         <div class="form-step" id="step-3" style="display:none;">
-                            <h3>Section 3: Previous Client References</h3>
+                            <h3>Previous Client References</h3>
                             <div class="row col-md-12">
                                 <div class="col-md-4">
                                     <!-- Client 1 Fields -->
                                     <h4>Client 1</h4>
                                     <div class="form-group">
-                                        <label for="client_1_name">Client Name</label>
+                                        <label for="client_1_name" style="font-size: 16px; font-weight: 500; color: #333;">Client Name</label>
                                         <input type="text" class="form-control" id="client_1_name" name="client_1_name"
-                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
-                                        <label for="client_1_address">Client Address</label>
+                                        <label for="client_1_address" style="font-size: 16px; font-weight: 500; color: #333;">Client Address</label>
                                         <input type="text" class="form-control" id="client_1_address"
                                                name="client_1_address"
-                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="client_1_contact_email">Client Contact Email</label>
+                                        <label for="client_1_contact_email" style="font-size: 16px; font-weight: 500; color: #333;">Client Contact Email</label>
                                         <input type="email" class="form-control" id="client_1_contact_email"
-                                               name="client_1_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                               name="client_1_contact_email" placeholder="Enter contact email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
-                                        <label for="client_1_contact_phone">Client Contact Phone</label>
+                                        <label for="client_1_contact_phone" style="font-size: 16px; font-weight: 500; color: #333;">Client Contact Phone</label>
                                         <input type="tel" class="form-control" id="client_1_contact_phone"
-                                               name="client_1_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                               name="client_1_contact_phone" placeholder="Enter contact phone" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <!-- Client 2 Fields -->
                                     <h4>Client 2</h4>
                                     <div class="form-group">
-                                        <label for="client_2_name">Client Name</label>
+                                        <label for="client_2_name" style="font-size: 16px; font-weight: 500; color: #333;">Client Name</label>
                                         <input type="text" class="form-control" id="client_2_name" name="client_2_name"
-                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
-                                        <label for="client_2_address">Client Address</label>
+                                        <label for="client_2_address" style="font-size: 16px; font-weight: 500; color: #333;">Client Address</label>
                                         <input type="text" class="form-control" id="client_2_address"
                                                name="client_2_address"
-                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="client_2_contact_email">Client Contact Email</label>
                                         <input type="email" class="form-control" id="client_2_contact_email"
-                                               name="client_2_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                               name="client_2_contact_email" placeholder="Enter contact email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
-                                        <label for="client_2_contact_phone">Client Contact Phone</label>
+                                        <label for="client_2_contact_phone" style="font-size: 16px; font-weight: 500; color: #333;">Client Contact Phone</label>
                                         <input type="tel" class="form-control" id="client_2_contact_phone"
-                                               name="client_2_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                               name="client_2_contact_phone" placeholder="Enter contact phone" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <!-- Client 3 Fields -->
                                     <h4>Client 3</h4>
                                     <div class="form-group">
-                                        <label for="client_3_name">Client Name</label>
+                                        <label for="client_3_name" style="font-size: 16px; font-weight: 500; color: #333;">Client Name</label>
                                         <input type="text" class="form-control" id="client_3_name" name="client_3_name"
-                                               placeholder="Enter client name" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
                                         <label for="client_3_address">Client Address</label>
                                         <input type="text" class="form-control" id="client_3_address"
                                                name="client_3_address"
-                                               placeholder="Enter client address" style="background-color: #ccffcc;"/>
+                                               placeholder="Enter client address" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="client_3_contact_email">Client Contact Email</label>
                                         <input type="email" class="form-control" id="client_3_contact_email"
-                                               name="client_3_contact_email" placeholder="Enter contact email" style="background-color: #ccffcc;"/>
+                                               name="client_3_contact_email" placeholder="Enter contact email" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
                                     <div class="form-group">
-                                        <label for="client_3_contact_phone">Client Contact Phone</label>
+                                        <label for="client_3_contact_phone" style="font-size: 16px; font-weight: 500; color: #333;">Client Contact Phone</label>
                                         <input type="tel" class="form-control" id="client_3_contact_phone"
-                                               name="client_3_contact_phone" placeholder="Enter contact phone" style="background-color: #ccffcc;"/>
+                                               name="client_3_contact_phone" placeholder="Enter contact phone" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                                     </div>
 
                                 </div>
@@ -423,34 +428,34 @@
                         </div>
                         <!-- Step 4: Certifications or Accreditations -->
                         <div class="form-step" id="step-4" style="display:none;">
-                            <h3>Section 4: Certifications or Accreditations</h3>
+                            <h3>Certifications or Accreditations</h3>
                             <!-- Certification Fields -->
                             <h4>Certification</h4>
                             <div class="form-group">
                                 <label for="certification">Certification</label>
                                 <input type="text" class="form-control" id="certification" name="certification"
-                                       placeholder="Enter certification name" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter certification name" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="certificate_number">Certificate Number</label>
+                                <label for="certificate_number" style="font-size: 16px; font-weight: 500; color: #333;">Certificate Number</label>
                                 <input type="text" class="form-control" id="certificate_number"
-                                       name="certificate_number" placeholder="Enter certificate number" style="background-color: #ccffcc;"
+                                       name="certificate_number" placeholder="Enter certificate number" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                 />
                             </div>
                             <div class="form-group">
-                                <label for="certifying_body">Certifying Body</label>
+                                <label for="certifying_body" style="font-size: 16px; font-weight: 500; color: #333;">Certifying Body</label>
                                 <input type="text" class="form-control" id="certifying_body" name="certifying_body"
-                                       placeholder="Enter certifying body" style="background-color: #ccffcc;"/>
+                                       placeholder="Enter certifying body" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"/>
                             </div>
                             <div class="form-group">
-                                <label for="award_date">Award Date</label>
+                                <label for="award_date" style="font-size: 16px; font-weight: 500; color: #333;">Award Date</label>
                                 <input type="date" class="form-control" id="award_date" name="award_date"
                                 />
                             </div>
                             <div class="form-group">
-                                <label for="certificate_expiry_date">Expiry Date</label>
+                                <label for="certificate_expiry_date" style="font-size: 16px; font-weight: 500; color: #333;">Expiry Date</label>
                                 <input type="date" class="form-control" id="certificate_expiry_date"
-                                       name="certificate_expiry_date" style="background-color: #ccffcc;"
+                                       name="certificate_expiry_date" style="background-color: #f0f8ff; padding: 12px; font-size: 14px; border-radius: 12px; border: 1px solid #87cefa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
                                 />
                             </div>
 
@@ -459,44 +464,49 @@
                             <button type="button" class="btn btn-primary" id="next-4">Next</button>
                         </div>
                         <div class="form-step" id="step-5" style="display:none;">
-                            <h3>Section 5: Document Submission</h3>
+                            <h3>Document Submission</h3>
                             <!-- Document Checklist -->
-                            <h4>Checklist</h4>
-                            <div class="form-group">
-                                <label for="trade_license_business_registration">Trade License / Business Registration
+
+                            <div class="row">
+                            <div class="col">
+                                <h4>Checklist</h4>
+                                <div class="form-group">
+                                <label for="trade_license_business_registration" style="font-size: 16px; font-weight: 500; color: #333;">Trade License / Business Registration
                                 </label>
                                 <input type="file" class="form-control" id="trade_license_business_registration"
                                        name="trade_license_business_registration"/>
                             </div>
                             <div class="form-group">
-                                <label for="certificate_of_incorporation">Certificate of Incorporation</label>
+                                <label for="certificate_of_incorporation" style="font-size: 16px; font-weight: 500; color: #333;">Certificate of Incorporation</label>
                                 <input type="file" class="form-control" id="certificate_of_incorporation"
                                        name="certificate_of_incorporation"/>
                             </div>
                             <div class="form-group">
-                                <label for="certificate_of_good_standing">Certificate of Good Standing</label>
+                                <label for="certificate_of_good_standing" style="font-size: 16px; font-weight: 500; color: #333;">Certificate of Good Standing</label>
                                 <input type="file" class="form-control" id="certificate_of_good_standing"
                                        name="certificate_of_good_standing"/>
                             </div>
                             <div class="form-group">
-                                <label for="establishment_card">Establishment Card</label>
+                                <label for="establishment_card" style="font-size: 16px; font-weight: 500; color: #333;">Establishment Card</label>
                                 <input type="file" class="form-control" id="establishment_card"
                                        name="establishment_card"/>
                             </div>
                             <div class="form-group">
-                                <label for="vat_tax_certificate">VAT / Tax Certificate</label>
+                                <label for="vat_tax_certificate" style="font-size: 16px; font-weight: 500; color: #333;">VAT / Tax Certificate</label>
                                 <input type="file" class="form-control" id="vat_tax_certificate"
                                        name="vat_tax_certificate"/>
                             </div>
-                            <div class="form-group">
-                                <label for="memorandum_of_association">Memorandum of Association / Power of Attorney /
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                <label for="memorandum_of_association" style="font-size: 16px; font-weight: 500; color: #333;">Memorandum of Association / Power of Attorney /
                                     Legal Instrument authorizing Authorized Person
                                 </label>
                                 <input type="file" class="form-control" id="memorandum_of_association"
                                        name="memorandum_of_association"/>
                             </div>
                             <div class="form-group">
-                                <label for="identification_document_for_authorized_person">Identification Document for
+                                <label for="identification_document_for_authorized_person" style="font-size: 16px; font-weight: 500; color: #333;">Identification Document for
                                     Authorized Person / Signatory
                                 </label>
                                 <input type="file" class="form-control"
@@ -504,24 +514,27 @@
                                        name="identification_document_for_authorized_person"/>
                             </div>
                             <div class="form-group">
-                                <label for="bank_letter_indicating_bank_account">Bank Letter indicating Bank Account
+                                <label for="bank_letter_indicating_bank_account" style="font-size: 16px; font-weight: 500; color: #333;">Bank Letter indicating Bank Account
                                     Information
                                 </label>
                                 <input type="file" class="form-control" id="bank_letter_indicating_bank_account"
                                        name="bank_letter_indicating_bank_account"/>
                             </div>
                             <div class="form-group">
-                                <label for="past_2_years_audited_financial_statements">Past 2 years Audited Financial
+                                <label for="past_2_years_audited_financial_statements" style="font-size: 16px; font-weight: 500; color: #333;">Past 2 years Audited Financial
                                     Statements
                                 </label>
                                 <input type="file" class="form-control" id="past_2_years_audited_financial_statements"
                                        name="past_2_years_audited_financial_statements"/>
                             </div>
                             <div class="form-group">
-                                <label for="other_certifications">Other Certification / Accreditations</label>
+                                <label for="other_certifications" style="font-size: 16px; font-weight: 500; color: #333;">Other Certification / Accreditations</label>
                                 <input type="file" class="form-control" id="other_certifications"
                                        name="other_certifications"/>
                             </div>
+                            </div>
+                                </div>
+
 
                             <!-- Declaration -->
                             <h4>Declaration</h4>
@@ -534,25 +547,21 @@ quotations, bids, and/or proposals.</label>
                                 </div>
 
                             <div class="form-group">
-                                <label for="signatory_name">Name of Signatory</label>
+                                <label for="signatory_name" style="font-size: 16px; font-weight: 500; color: #333;">Name of Signatory</label>
                                 <input type="text" class="form-control" id="signatory_name" name="signatory_name"
                                        placeholder="Enter signatory name"/>
                             </div>
                             <div class="form-group">
-                                <label for="authorized_signatory">Authorized Signatory</label>
+                                <label for="authorized_signatory" style="font-size: 16px; font-weight: 500; color: #333;">Authorized Signatory</label>
                                 <input type="text" class="form-control" id="authorized_signatory"
                                        name="authorized_signatory" placeholder="Enter authorized signatory"
                                 />
                             </div>
                             <div class="form-group">
-                                <label for="company_stamp_and_date">Company Stamp &amp; Date (Image Upload)</label>
-                                <input type="file" class="form-control" id="company_stamp_and_date"
-                                       name="company_stamp_and_date"
-                                       accept="image/*"/>
-                                <small class="form-text text-muted">Please upload an image of the company stamp with the
-                                    date.
-                                </small>
-                            </div>
+                        <label for="company_logo">Company Logo (Image Upload)</label>
+                        <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*"/>
+                        <small class="form-text text-muted">Please upload an image of the company logo.</small>
+                    </div>
                            <button type="button" class="btn btn-secondary" id="prev-5">Previous</button>
                             <button type="submit" class="btn btn-primary" id="submit-form">Submit</button>
 

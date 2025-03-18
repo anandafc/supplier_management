@@ -5,7 +5,7 @@ from odoo.exceptions import ValidationError, UserError
 
 
 class SupplierRegistration(models.TransientModel):
-    _name = 'supplier.registration'
+    _name = 'supplier_management.registration'
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = 'Supplier Registration'
     _rec_name = 'company_name'
@@ -70,6 +70,7 @@ class SupplierRegistration(models.TransientModel):
     bank_letter_indicating_bank_account = fields.Binary(string='Bank Letter indicating Bank Account')
     past_2_years_audited_financial_statements = fields.Binary(string='Past 2 Years Audited Financial Statements')
     other_certifications = fields.Binary(string='Other Certifications')
+    company_logo = fields.Binary(string='Company Logo', attachment=True)
     # Declaration Field
     declaration = fields.Boolean(
         string="I confirm that all information and documents supplied are true and accurate to "
@@ -78,11 +79,11 @@ class SupplierRegistration(models.TransientModel):
     state = fields.Selection(
         selection=[
             ('draft', 'Draft'),
+            ('submitted', 'Submit'),
             ('recommended', 'Recommended'),
             ('blacklisted', 'Blacklisted'),
             ('approved', 'Approved'),
             ('rejected', 'Rejected'),
-            # ('submitted','Submit')
         ],
         string='Status',
         default='draft'
@@ -110,6 +111,7 @@ class SupplierRegistration(models.TransientModel):
             'certificate_expiry_date': self.certificate_expiry_date or 'N/A',
             'supplier_rank': 1,
             'company_type': 'company',
+            'image_1920': self.company_logo if self.company_logo else False,
         }
         vals = {k: v for k, v in vals.items() if v != 'N/A'}
         vals['child_ids'] = []
@@ -196,7 +198,7 @@ class SupplierRegistration(models.TransientModel):
         #     raise UserError("Email template not found!")
 
         # Change State to Approved
-        self.state = 'approved'
+        # self.state = 'approved'
 
 
     def action_recommend_supplier(self):
@@ -224,15 +226,16 @@ class SupplierRegistration(models.TransientModel):
     def action_reject(self):
         self.state = 'rejected'
 
-    # def action_submit(self):
-    #     self.state = 'submitted'
+    def action_submit(self):
+        if self.state in ['recommended', 'blacklisted']:  # Ensure submit is possible only in these states
+            self.state = 'submitted'
 
 
 class RecommendedSupplier(models.TransientModel):
     _name = 'recommended.supplier'
     _description = 'Recommended Supplier (Temporary)'
 
-    supplier_id = fields.Many2one('supplier.registration', string='Supplier', required=True)
+    supplier_id = fields.Many2one('supplier_management.registration', string='Supplier', required=True)
     reviewer_notes = fields.Text(string='Reviewer Notes')
     recommendation_date = fields.Date(string='Date', default=fields.Date.today())
     state = fields.Selection([
@@ -254,7 +257,7 @@ class BlacklistedSupplier(models.TransientModel):
     _name = 'blacklisted.supplier'
     _description = 'Blacklisted Supplier (Temporary)'
 
-    supplier_id = fields.Many2one('supplier.registration', string='Supplier', required=True)
+    supplier_id = fields.Many2one('supplier_management.registration', string='Supplier', required=True)
     reviewer_notes = fields.Text(string='Reviewer Notes')
     blacklist_date = fields.Date(string='Date', default=fields.Date.today())
 

@@ -1,0 +1,72 @@
+<odoo>
+    <data>
+        <!-- Email Template for RFP Submission -->
+        <record id="email_template_rfp_submitted" model="mail.template">
+            <field name="name">RFP Submission</field>
+            <field name="model_id" ref="supplier_management.rfp"/>
+            <field name="subject">RFP <b>{{object.rfp_number}}</b> Submitted for Approval</field>
+            <field name="email_from">{{object.env.user.email}}</field>  <!-- Send from current user -->
+            <field name="email_to">{{ctx.get('email_to')}}</field>  <!-- Dynamic recipient -->
+            <field name="body_html">
+                <![CDATA[
+                    <p>Dear Approver,</p>
+                    <p>The RFP <b>{{object.rfp_number}}</b> has been submitted and is pending your approval.</p>
+                    <p>Regards,</p>
+                    <p>Your Company</p>
+                ]]>
+            </field>
+        </record>
+
+        <!-- Email Template for RFP Approval -->
+        <record id="email_template_rfp_approved" model="mail.template">
+            <field name="name">RFP Approval</field>
+            <field name="model_id" ref="supplier_management.rfp"/>
+            <field name="subject">RFP <b>{{object.rfp_number}}</b> Approved</field>
+            <field name="email_from">{{object.env.user.email}}</field>
+            <field name="email_to">{{ctx.get('email_to')}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>Dear Reviewer,</p>
+                    <p>The RFP <b>{{object.rfp_number}}</b> has been approved.</p>
+                    <p>Regards,</p>
+                    <p>Your Company</p>
+                ]]>
+            </field>
+        </record>
+
+        <!-- Email Template for RFP Recommendation -->
+        <record id="email_template_rfp_recommendation" model="mail.template">
+            <field name="name">RFP Recommendation</field>
+            <field name="model_id" ref="supplier_management.rfp"/>
+            <field name="subject">RFP <b>{{object.rfp_number}}</b> Recommended for Final Approval</field>
+            <field name="email_from">{{object.env.user.email}}</field>
+            <field name="email_to">{{ctx.get('email_to')}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>Dear Approver,</p>
+                    <p>The RFP <b>{{object.rfp_number}}</b> has been recommended and is awaiting your final approval.</p>
+                    <p>Regards,</p>
+                    <p>Your Company</p>
+                ]]>
+            </field>
+        </record>
+
+        <!-- Email Template for Supplier Notification -->
+        <record id="email_template_supplier_notification" model="mail.template">
+            <field name="name">Supplier Notification</field>
+            <field name="model_id" ref="supplier_management.rfp"/>
+            <field name="subject">New RFP <b>{{object.rfp_number}}</b> Open for Quotation</field>
+            <field name="email_from">{{object.env.user.email}}</field>
+            <field name="email_to">{{ctx.get('email_to')}}</field>
+            <field name="body_html">
+                <![CDATA[
+                    <p>Dear Supplier,</p>
+                    <p>A new RFP <b>{{object.rfp_number}}</b> has been created and is now open for your quotation.</p>
+                    <p>Regards,</p>
+                    <p>Your Company</p>
+                ]]>
+            </field>
+        </record>
+
+    </data>
+</odoo>

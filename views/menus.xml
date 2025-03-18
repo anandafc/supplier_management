@@ -3,6 +3,24 @@
     <data>
         <!-- Define the root menu -->
         <menuitem id="menu_supplier_management_root" name="Supplier Management" sequence="10"/>
+        <!-- Define the RFP menu item under the root menu -->
+        <menuitem id="menu_rfp"
+                  name="RFP"
+                  parent="menu_supplier_management_root"
+                  action="action_rfp"
+                  sequence="20"/>
+        <!-- Menu for RFP Report -->
+        <menuitem id="menu_rfp_report"
+                  name="Generate RFP Report"
+                  parent="menu_supplier_management_root"
+                  action="action_rfp_report_wizard"
+                  sequence="30"/>
+<!--        &lt;!&ndash; Menu Item for the Dashboard &ndash;&gt;-->
+<!--    <menuitem id="menu_supplier_dashboard" name="Supplier Dashboard"-->
+<!--              action="action_supplier_dashboard"-->
+<!--              parent="menu_supplier_management_root"-->
+<!--                sequence="40"/>-->
+
 
     </data>
 </odoo>

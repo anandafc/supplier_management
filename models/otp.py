@@ -4,7 +4,7 @@ import string
 from datetime import timedelta
 
 class SupplierOTPCode(models.Model):
-    _name = 'supplier.otp'
+    _name = 'supplier_management.otp'
     _description = 'Temporary OTP Storage for Supplier Verification'
 
     supplier_email = fields.Char(string="Supplier Email", required=True, index=True, unique=True)

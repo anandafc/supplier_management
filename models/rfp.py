@@ -1,15 +1,22 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from datetime import timedelta
+from odoo.exceptions import ValidationError
+# import logging
+# _logger = logging.getLogger(__name__)
 
-
-class SupplierRFP(models.Model):
-    _name = "supplier.rfp"
+class RFP(models.Model):
+    _name = "supplier_management.rfp"
     _description = "Request for Purchase"
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _order = "create_date desc"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'create_date desc'
+    _log_access = True
+    _rec_name = "rfp_number"
 
-    rfp_number = fields.Char(string="RFP Number", required=True, copy=False, readonly=True, index=True, default=lambda self: _('New'))
-    state = fields.Selection([
+    rfp_number = fields.Char(string="RFP Number", required=True, copy=False, readonly=True, default='New',store=True)
+
+
+    status = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Submitted'),
         ('approved', 'Approved'),
@@ -17,119 +24,143 @@ class SupplierRFP(models.Model):
         ('closed', 'Closed'),
         ('recommendation', 'Recommendation'),
         ('accepted', 'Accepted'),
-    ], string="Status", default='draft', tracking=True)
+    ], string="Status", default="draft", tracking=True)
 
-    required_date = fields.Date(string="Required Date", default=lambda self: fields.Date.add(fields.Date.today(), days=7))
-    expiry_date = fields.Date(string="Expiry Date", required=True)
-    total_amount = fields.Monetary(string="Total Amount", compute="_compute_total_amount", store=True)
-    currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id.id)
+    required_date = fields.Date(string="Required Date", default=lambda self: fields.Date.today() + timedelta(days=7), tracking=True)
 
-    company_id = fields.Many2one('res.company', string="Company", default=lambda self: self.env.company, index=True)
-    reviewer_id = fields.Many2one('res.users', string="Reviewer", default=lambda self: self.env.uid, readonly=True)
-    approved_supplier_id = fields.Many2one('res.partner', string="Approved Supplier",
-                                           domain="[('supplier_rank', '>', 0)]",
-                                           help="Editable by approver only.")
+    currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id)
+    total_amount = fields.Monetary(string="Total Amount", currency_field="currency_id", compute="_compute_total_amount", store=True)
 
-    product_line_ids = fields.One2many('supplier.rfp.line', 'rfp_id', string="Product Lines")
-    rfq_line_ids = fields.One2many('purchase.order', 'rfp_id', string="RFQ Lines")
+    reviewer_id = fields.Many2one('res.users', string="Reviewer", required=True, default=lambda self: self.env.user, tracking=True)
+    approver_id = fields.Many2one('res.users', string="Approver", tracking=True)
+
+    approved_supplier_id = fields.Many2one('res.partner', string="Approved Supplier", domain="[('id', 'in', recommended_supplier_ids)]", tracking=True)
+    recommended_supplier_ids = fields.Many2many('res.partner', string="Recommended Suppliers", compute="_compute_recommended_suppliers")
+
+    product_line_ids = fields.One2many("supplier_management.rfp.product", "rfp_id", string="Product Lines")
+
+    rfq_line_ids = fields.One2many("purchase.order", "rfp_id", string="RFQ Lines")
+
+    company_id = fields.Many2one("res.company", string="Company", default=lambda self: self.env.company, readonly=True)
+
+    @api.depends('rfq_line_ids.order_line.price_subtotal')
+    def _compute_total_amount(self):
+        for rfp in self:
+            total = sum(rfp.rfq_line_ids.mapped('order_line.price_subtotal'))
+            rfp.total_amount = total
+
+    def _compute_recommended_suppliers(self):
+        for rfp in self:
+            recommended_rfq_lines = rfp.rfq_line_ids.filtered(lambda r: r.recommended)
+            rfp.recommended_supplier_ids = recommended_rfq_lines.mapped('partner_id')
 
     @api.model
     def create(self, vals):
+        # Generate the RFP number using the sequence if it's not set already
         if vals.get('rfp_number', _('New')) == _('New'):
-            vals['rfp_number'] = self.env['ir.sequence'].next_by_code('supplier.rfp.sequence') or _('New')
-        return super(SupplierRFP, self).create(vals)
+            # Using the ir.sequence model to get the next RFP number
+            vals['rfp_number'] = self.env['ir.sequence'].next_by_code('supplier_management.rfp') or _('New')
 
-    @api.depends('rfq_line_ids', 'rfq_line_ids.amount_total', 'rfq_line_ids.state')
-    def _compute_total_amount(self):
-        """Computes total amount from accepted RFQ lines."""
-        for rfp in self:
-            total = sum(rfq.amount_total for rfq in rfp.rfq_line_ids.filtered(lambda rfq: rfq.state == 'accepted'))
-            rfp.total_amount = total
+        return super(RFP, self).create(vals)
 
-    # ----- Reviewer Actions -----
     def action_submit(self):
-        """Reviewer submits the RFP from Draft to Submitted."""
-        if self.state != 'draft':
-            raise UserError(_("Only a Draft RFP can be submitted."))
-        self.state = 'submitted'
-
-    def action_return_to_draft(self):
-        """Reviewer returns a submitted RFP to Draft for further editing."""
-        if self.state != 'submitted':
-            raise UserError(_("Only a Submitted RFP can be returned to Draft."))
-        self.state = 'draft'
+        self.write({'status': 'submitted'})
+        approver_group = self.env.ref('supplier_management.group_supplier_management_approver')
+        for approver in approver_group.users:
+            self.message_post(
+                body=_("RFP <b>%s</b> has been submitted and is pending approval.") % self.rfp_number,
+                partner_ids=[approver.partner_id.id]
+            )
 
     def action_recommend(self):
-        """Reviewer recommends an RFP after closing it."""
-        if self.state != 'closed':
-            raise UserError(_("Only a Closed RFP can be recommended."))
-        recommended_lines = self.rfq_line_ids.filtered(lambda l: l.recommended)
-        if not recommended_lines:
-            raise UserError(_("You must recommend at least one RFQ line."))
-        self.state = 'recommendation'
+        recommended_rfq = self.env['purchase.order'].search([('rfp_id', '=', self.id), ('recommended', '=', True)])
 
-    # ----- Approver Actions -----
+        if not recommended_rfq:
+            raise ValidationError(_("You must have at least one recommended RFQ before proceeding."))
+
+        self.write({'status': 'recommendation'})
+        approver_group = self.env.ref('supplier_management.group_supplier_management_approver')
+        for approver in approver_group.users:
+            self.message_post(
+                body=_("RFP <b>%s</b> has been recommended and is pending final approval.") % self.rfp_number,
+                partner_ids=[approver.partner_id.id]
+            )
+
+    def action_return_draft(self):
+        if self.status != 'submitted':
+            raise ValidationError(_("You can only return an RFP to Draft when it's in the Submitted state."))
+        self.write({'status': 'draft'})
+        self.message_post(
+            body=_("RFP <b>%s</b> has been returned to Draft for modifications.") % self.rfp_number,
+            partner_ids=[self.create_uid.partner_id.id]  # Notify the creator
+        )
+
     def action_approve(self):
-        """Approver approves an RFP that is in Submitted state."""
-        if self.state != 'submitted':
-            raise UserError(_("Only a Submitted RFP can be approved."))
-        self.state = 'approved'
+        """ Approves the RFP, Notifies the Reviewer & Suppliers """
+        self.write({'status': 'approved'})
+
+        # Notify the Reviewer about the approval
+        if self.reviewer_id:
+            self.message_post(
+                body=_("RFP <b>%s</b> has been Approved.") % self.rfp_number,
+                partner_ids=[self.reviewer_id.partner_id.id]
+            )
+
+        # Notify Suppliers about the new RFP for quotations
+        supplier_group = self.env.ref("base.group_portal")
+        for supplier in supplier_group.users:
+            self.message_post(
+                body=_("A new RFP <b>%s</b> is now open for quotations.") % self.rfp_number,
+                partner_ids=[supplier.partner_id.id]
+            )
 
     def action_reject(self):
-        """Approver rejects an RFP that is in Submitted state."""
-        if self.state != 'submitted':
-            raise UserError(_("Only a Submitted RFP can be rejected."))
-        self.state = 'rejected'
+        """ Rejects the RFP and notifies the Reviewer """
+        self.write({'status': 'rejected'})
+
+        # Notify the Reviewer about the rejection
+        if self.reviewer_id:
+            self.message_post(
+                body=_("RFP <b>%s</b> has been Rejected.") % self.rfp_number,
+                partner_ids=[self.reviewer_id.partner_id.id]
+            )
 
     def action_close(self):
-        """Approver closes an Approved RFP, removing it from the portal."""
-        if self.state != 'approved':
-            raise UserError(_("Only an Approved RFP can be closed."))
-        self.state = 'closed'
+        """ Closes the RFP and removes it from the portal """
+        self.write({'status': 'closed'})
+        self.message_post(body=_("RFP <b>%s</b> has been Closed.") % self.rfp_number)
 
     def action_accept(self):
-        """Approver creates a Purchase Order from an RFP in the Recommendation state."""
-        if self.state != 'recommendation':
-            raise UserError(_("Only an RFP in Recommendation state can be accepted."))
-        if not self.approved_supplier_id:
-            raise UserError(_("You must set an Approved Supplier first."))
-        recommended_line = self.rfq_line_ids.filtered(lambda l: l.partner_id == self.approved_supplier_id and l.recommended)
-        if not recommended_line:
-            raise UserError(_("No recommended RFQ line found for the approved supplier."))
+        """ Accepts the recommended RFQ and converts it into a PO """
+        # Search for the recommended RFQ
+        recommended_rfq = self.env['purchase.order'].search([('rfp_id', '=', self.id), ('recommended', '=', True)],
+                                                            limit=1)
 
-        po_vals = {
-            'partner_id': self.approved_supplier_id.id,
-            'origin': self.name,
+        if not recommended_rfq:
+            raise ValidationError(_("There must be a recommended RFQ before accepting the RFP."))
+
+        # Set the status to 'accepted'
+        self.write({'status': 'accepted'})
+
+        # Set the approved supplier ID based on the recommended RFQ
+        self.approved_supplier_id = recommended_rfq.partner_id  # Set the approved supplier from the recommended RFQ
+
+        # Create Purchase Order (PO) from the recommended RFQ
+        po_values = {
+            'partner_id': recommended_rfq.partner_id.id,  # Supplier (Vendor) who submitted the RFQ
+            'rfp_id': self.id,  # Link the PO to the current RFP
+            'date_order': fields.Date.today(),  # Set today's date as the order date
+            'order_line': [(0, 0, {
+                'product_id': line.product_id.id,  # Product from the RFQ line
+                'product_qty': line.product_qty,  # Quantity of the product
+                'price_unit': line.price_unit,  # Unit price from the RFQ line
+                'delivery_charge': line.delivery_charge,  # Delivery charge from the RFQ line
+            }) for line in recommended_rfq.order_line],  # Create PO lines from the RFQ order lines
         }
-        self.env['purchase.order'].create(po_vals)
-        self.state = 'accepted'
 
+        # Create the Purchase Order
+        po = self.env['purchase.order'].create(po_values)
 
-class SupplierRFPLine(models.Model):
-    _name = "supplier.rfp.line"
-    _description = "RFP Product Line"
-
-    rfp_id = fields.Many2one('supplier.rfp', string="RFP", ondelete='cascade')
-    product_id = fields.Many2one('product.product', string="Product", required=True)
-    description = fields.Text(string="Description")
-    quantity = fields.Float(string="Quantity", required=True)
-    unit_price = fields.Monetary(string="Unit Price")
-    delivery_charges_supplier = fields.Monetary(string="Delivery Charges")
-    subtotal_price = fields.Monetary(string="Subtotal", compute="_compute_subtotal", store=True)
-    currency_id = fields.Many2one('res.currency', string="Currency", default=lambda self: self.env.company.currency_id.id)
-
-    @api.depends('quantity', 'unit_price', 'delivery_charges_supplier')
-    def _compute_subtotal(self):
-        for line in self:
-            line.subtotal_price = (line.quantity * line.unit_price) + line.delivery_charges_supplier
-
-
-class PurchaseOrder(models.Model):
-    _inherit = "purchase.order"
-
-    rfp_id = fields.Many2one('supplier.rfp', string="Related RFP")
-    expected_delivery_date = fields.Date(string="Expected Delivery Date")
-    terms_conditions = fields.Html(string="Terms and Conditions")
-    warranty_period = fields.Integer(string="Warranty Period (months)")
-    score = fields.Integer(string="Score")
-    recommended = fields.Boolean(string="Recommended")
+        # Post a message to the RFP, notifying that the PO has been created
+        self.message_post(body=_("RFP <b>%s</b> has been accepted and a Purchase Order <b>%s</b> has been created.") % (
+        self.rfp_number, po.name))
